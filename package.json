@@ -9,7 +9,7 @@
     "lint": "./node_modules/.bin/eslint --ext .js -f ./node_modules/eslint-friendly-formatter src",
     "build": "webpack --config webpack.config.js",
     "doc": "./node_modules/.bin/esdoc -c esdoc.json",
-    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
+    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov > coverage.lcov && ./node_modules/.bin/codecov"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "babel-register": "^6.23.0",
     "babel-runtime": "^6.23.0",
     "chai": "^3.5.0",
+    "codecov": "^2.1.0",
     "coveralls": "^2.12.0",
     "esdoc": "^0.5.2",
     "eslint": "^3.17.1",
