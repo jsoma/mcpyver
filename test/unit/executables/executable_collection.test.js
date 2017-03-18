@@ -42,7 +42,7 @@ describe('ExecutableCollection', () => {
 
       let inputs = new ExecutableCollection(...[ex1, ex2, ex3])
       inputs.merge()
-        .then(() => {
+        .then((merged) => {
           merged.length.should.equal(1)
         })
 
