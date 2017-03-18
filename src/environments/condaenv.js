@@ -12,8 +12,7 @@ export default class CondaEnv extends Environment {
 
   getCommandPath (command) {
     return new Promise((resolve, reject) => {
-      let activatePath = join(this.basepath, 'bin', 'activate')
-      exec(`source ${activatePath} && which ${command}`, (error, stdout, stderr) => {
+      exec(`source activate ${this.basepath} && which ${command}`, (error, stdout, stderr) => {
         if (error) {
           reject(error)
         }
