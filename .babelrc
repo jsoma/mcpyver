@@ -1,0 +1,14 @@
+{
+  "presets": ["es2015", "stage-0"],
+  "comments": false,
+  "env": {
+    "test": {
+      "plugins": ["istanbul"]
+    }
+  },
+  "plugins": [
+    ["transform-builtin-extend", {
+        globals: ["Array"]
+    }]
+  ]
+}

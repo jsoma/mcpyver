@@ -1,0 +1,4492 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "src/environments/condaenv.js",
+    "content": "import { exec } from '../executive'\nimport { basename, join } from 'path'\nimport { PipExecutable, PythonExecutable } from '../executables'\nimport Environment from './environment'\n\nexport default class CondaEnv extends Environment {\n\n  constructor (basepath) {\n    super()\n    this.basepath = basepath\n    this.name = basename(this.basepath)\n  }\n\n  getCommandPath (command) {\n    return new Promise((resolve, reject) => {\n      let activatePath = join(this.basepath, 'bin', 'activate')\n      exec(`source ${activatePath} && which ${command}`, (error, stdout, stderr) => {\n        if (error) {\n          reject(error)\n        }\n        resolve(stdout.trim())\n      })\n    })\n  }\n\n  setPipData () {\n    return this.getCommandPath('pip')\n      .then(path => new PipExecutable(path).populate())\n      .then(results => {\n        this.pip = results\n        return this\n      })\n  }\n\n  setPythonData () {\n    return this.getCommandPath('python')\n      .then(path => new PythonExecutable(path).populate())\n      .then(results => {\n        this.python = results\n        return this\n      })\n  }\n\n  getPackages () {\n    return new Promise((resolve, reject) => {\n      exec(`conda list --prefix ${this.basepath} --json`, (error, stdout, stderr) => {\n        if (error) {\n          return reject(error)\n        }\n        resolve(JSON.parse(stdout))\n      })\n    })\n  }\n\n  setEnvData () {\n    return this.setPipData()\n      .then(() => this.setPythonData())\n      .then(() => this.getPackages())\n      .then((data) => {\n        this.packages = data\n        return this\n      })\n      .catch((error) => {\n        this.addError(error)\n        return this\n      })\n  }\n\n  static lsenvs () {\n    return new Promise((resolve, reject) => {\n      exec(`conda info --envs --json`, (error, stdout, stderr) => {\n        if (error) {\n          reject(error)\n        } else {\n          resolve(JSON.parse(stdout)['envs'])\n        }\n      })\n    })\n  }\n\n  static find () {\n    return this.lsenvs()\n      .then(paths => {\n        return paths.map(path => new CondaEnv(path))\n      })\n  }\n\n  static get command () {\n    return 'conda'\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/environments/condaenv.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "class",
+    "name": "CondaEnv",
+    "memberof": "src/environments/condaenv.js",
+    "static": true,
+    "longname": "src/environments/condaenv.js~CondaEnv",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/environments/condaenv.js",
+    "importStyle": "CondaEnv",
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "src/environments/environment.js~Environment"
+    ]
+  },
+  {
+    "__docId__": 2,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "basepath",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 3,
+    "kind": "member",
+    "name": "basepath",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#basepath",
+    "access": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "member",
+    "name": "name",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#name",
+    "access": null,
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "method",
+    "name": "getCommandPath",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#getCommandPath",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "command",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "method",
+    "name": "setPipData",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#setPipData",
+    "access": null,
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 7,
+    "kind": "member",
+    "name": "pip",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#pip",
+    "access": null,
+    "description": null,
+    "lineNumber": 30,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "method",
+    "name": "setPythonData",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#setPythonData",
+    "access": null,
+    "description": null,
+    "lineNumber": 35,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 9,
+    "kind": "member",
+    "name": "python",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#python",
+    "access": null,
+    "description": null,
+    "lineNumber": 39,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 10,
+    "kind": "method",
+    "name": "getPackages",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#getPackages",
+    "access": null,
+    "description": null,
+    "lineNumber": 44,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 11,
+    "kind": "method",
+    "name": "setEnvData",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#setEnvData",
+    "access": null,
+    "description": null,
+    "lineNumber": 55,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "member",
+    "name": "packages",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "static": false,
+    "longname": "src/environments/condaenv.js~CondaEnv#packages",
+    "access": null,
+    "description": null,
+    "lineNumber": 60,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 13,
+    "kind": "method",
+    "name": "lsenvs",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/condaenv.js~CondaEnv.lsenvs",
+    "access": null,
+    "description": null,
+    "lineNumber": 69,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 14,
+    "kind": "method",
+    "name": "find",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/condaenv.js~CondaEnv.find",
+    "access": null,
+    "description": null,
+    "lineNumber": 81,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 15,
+    "kind": "get",
+    "name": "command",
+    "memberof": "src/environments/condaenv.js~CondaEnv",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/condaenv.js~CondaEnv.command",
+    "access": null,
+    "description": null,
+    "lineNumber": 88,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 16,
+    "kind": "file",
+    "name": "src/environments/environment.js",
+    "content": "import { exec } from '../executive'\n\nexport default class Environment {\n\n  addError (error) {\n    if (!this.error) {\n      this.errors = [ error ]\n    }\n    this.errors.push(error)\n  }\n\n  populate () {\n    return this.setEnvData()\n      .then(() => this)\n      .catch((error) => {\n        this.addError(error)\n        return this\n      })\n  }\n\n  getEnvData () {\n    return Promise.resolve({})\n  }\n\n  static findAndPopulate () {\n    return this.find()\n      .then((envs) => {\n        return Promise.all(envs.map(env => env.populate()))\n      })\n  }\n\n  static find () {\n    return Promise.all([])\n  }\n\n  static isInstalled () {\n    return new Promise((resolve, reject) => {\n      exec(`${this.command} --version`, (error, stdout, stderr) => {\n        // TODO\n        if (error) {\n          reject(error)\n        }\n        resolve(stderr.indexOf('command not found') === -1)\n      })\n    })\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/environments/environment.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 17,
+    "kind": "class",
+    "name": "Environment",
+    "memberof": "src/environments/environment.js",
+    "static": true,
+    "longname": "src/environments/environment.js~Environment",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/environments/environment.js",
+    "importStyle": "Environment",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false
+  },
+  {
+    "__docId__": 18,
+    "kind": "method",
+    "name": "addError",
+    "memberof": "src/environments/environment.js~Environment",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/environment.js~Environment#addError",
+    "access": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "error",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 19,
+    "kind": "member",
+    "name": "errors",
+    "memberof": "src/environments/environment.js~Environment",
+    "static": false,
+    "longname": "src/environments/environment.js~Environment#errors",
+    "access": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 20,
+    "kind": "method",
+    "name": "populate",
+    "memberof": "src/environments/environment.js~Environment",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/environment.js~Environment#populate",
+    "access": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "method",
+    "name": "getEnvData",
+    "memberof": "src/environments/environment.js~Environment",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/environment.js~Environment#getEnvData",
+    "access": null,
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 22,
+    "kind": "method",
+    "name": "findAndPopulate",
+    "memberof": "src/environments/environment.js~Environment",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/environment.js~Environment.findAndPopulate",
+    "access": null,
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 23,
+    "kind": "method",
+    "name": "find",
+    "memberof": "src/environments/environment.js~Environment",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/environment.js~Environment.find",
+    "access": null,
+    "description": null,
+    "lineNumber": 32,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 24,
+    "kind": "method",
+    "name": "isInstalled",
+    "memberof": "src/environments/environment.js~Environment",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/environment.js~Environment.isInstalled",
+    "access": null,
+    "description": null,
+    "lineNumber": 36,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 25,
+    "kind": "file",
+    "name": "src/environments/virtualenv.js",
+    "content": "import { exec } from '../executive'\nimport { PipExecutable, PythonExecutable } from '../executables'\nimport Environment from './environment'\nimport { homedir, platform } from 'os'\nimport { join } from 'path'\n\nconst WORKON_HOME = join(homedir(), '.virtualenvs')\n\nexport default class VirtualEnv extends Environment {\n\n  constructor (name) {\n    super()\n    this.name = name\n    this.basepath = join(WORKON_HOME, this.name)\n  }\n\n  get pythonPath () {\n    return join(this.basepath, '/bin/python')\n  }\n\n  get pipPath () {\n    return join(this.basepath, '/bin/pip')\n  }\n\n  setPipData () {\n    return new PipExecutable(this.pipPath).populate()\n      .then(results => {\n        this.pip = results\n        return this\n      })\n  }\n\n  setPythonData () {\n    return new PythonExecutable(this.pythonPath).populate()\n      .then(results => {\n        this.python = results\n        return this\n      })\n  }\n\n  setEnvData () {\n    return Promise.all([\n      this.setPipData(),\n      this.setPythonData()\n    ])\n  }\n\n  static get command () {\n    return 'virtualenv'\n  }\n\n  static lsvirtualenv () {\n    return new Promise((resolve, reject) => {\n      let cmd = 'lsvirtualenv -b'\n      if (platform() !== 'win32') {\n        cmd = `source ~/.bash_profile && ${cmd}`\n      }\n\n      exec(cmd, (error, stdout, stderr) => {\n        if (error) {\n          reject(error)\n        }\n        resolve(stdout)\n      })\n    })\n  }\n\n  static find () {\n    return this.lsvirtualenv()\n      .then((stdout) => {\n        let names = stdout.trim().split('\\n')\n        return names.map(name => new VirtualEnv(name))\n      })\n      .catch(error => {\n        this.addError(error)\n        return this\n      })\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/environments/virtualenv.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 26,
+    "kind": "variable",
+    "name": "WORKON_HOME",
+    "memberof": "src/environments/virtualenv.js",
+    "static": true,
+    "longname": "src/environments/virtualenv.js~WORKON_HOME",
+    "access": null,
+    "export": false,
+    "importPath": "mcpyver/src/environments/virtualenv.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 27,
+    "kind": "class",
+    "name": "VirtualEnv",
+    "memberof": "src/environments/virtualenv.js",
+    "static": true,
+    "longname": "src/environments/virtualenv.js~VirtualEnv",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/environments/virtualenv.js",
+    "importStyle": "VirtualEnv",
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "src/environments/environment.js~Environment"
+    ]
+  },
+  {
+    "__docId__": 28,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "name",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 29,
+    "kind": "member",
+    "name": "name",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#name",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "member",
+    "name": "basepath",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#basepath",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 31,
+    "kind": "get",
+    "name": "pythonPath",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#pythonPath",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 32,
+    "kind": "get",
+    "name": "pipPath",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#pipPath",
+    "access": null,
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 33,
+    "kind": "method",
+    "name": "setPipData",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#setPipData",
+    "access": null,
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 34,
+    "kind": "member",
+    "name": "pip",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#pip",
+    "access": null,
+    "description": null,
+    "lineNumber": 28,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 35,
+    "kind": "method",
+    "name": "setPythonData",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#setPythonData",
+    "access": null,
+    "description": null,
+    "lineNumber": 33,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 36,
+    "kind": "member",
+    "name": "python",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#python",
+    "access": null,
+    "description": null,
+    "lineNumber": 36,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 37,
+    "kind": "method",
+    "name": "setEnvData",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/environments/virtualenv.js~VirtualEnv#setEnvData",
+    "access": null,
+    "description": null,
+    "lineNumber": 41,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 38,
+    "kind": "get",
+    "name": "command",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/virtualenv.js~VirtualEnv.command",
+    "access": null,
+    "description": null,
+    "lineNumber": 48,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 39,
+    "kind": "method",
+    "name": "lsvirtualenv",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/virtualenv.js~VirtualEnv.lsvirtualenv",
+    "access": null,
+    "description": null,
+    "lineNumber": 52,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 40,
+    "kind": "method",
+    "name": "find",
+    "memberof": "src/environments/virtualenv.js~VirtualEnv",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/environments/virtualenv.js~VirtualEnv.find",
+    "access": null,
+    "description": null,
+    "lineNumber": 68,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 41,
+    "kind": "file",
+    "name": "src/environments.js",
+    "content": "import Environment from './environments/environment'\nimport CondaEnv from './environments/condaenv'\nimport VirtualEnv from './environments/virtualenv'\n\nexport {\n  Environment,\n  CondaEnv,\n  VirtualEnv\n}\n",
+    "static": true,
+    "longname": "src/environments.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 42,
+    "kind": "file",
+    "name": "src/executables/conda.js",
+    "content": "import { exec } from '../executive'\nimport Executable from './executable'\nimport { CondaEnv } from '../environments'\n\nexport default class CondaExecutable extends Executable {\n\n  setExtras () {\n    return this.setDetails()\n      .then(() => this.setEnvironments())\n      .then(() => this.populateEnvironments())\n      .then(() => this)\n  }\n\n  setEnvironments () {\n    return new Promise((resolve, reject) => {\n      this.environments = this.details.envs.map((path) => new CondaEnv(path))\n      resolve()\n    })\n  }\n\n  populateEnvironments () {\n    let promises = this.environments.map((env) => env.populate())\n    return Promise.all(promises)\n  }\n\n  getDetails () {\n    return new Promise((resolve, reject) => {\n      exec(`${this.path} info --envs --json`, (error, stdout, stderr) => {\n        if (error) {\n          reject(error)\n        } else {\n          resolve(JSON.parse(stdout))\n        }\n      })\n    })\n  }\n\n  setDetails () {\n    return this.getDetails()\n      .then(details => {\n        this.details = details\n        return this\n      })\n  }\n\n  cleanVersion () {\n    this.version = this.rawVersion.trim().match(/conda ([\\d.]+)/i)[1]\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/executables/conda.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 43,
+    "kind": "class",
+    "name": "CondaExecutable",
+    "memberof": "src/executables/conda.js",
+    "static": true,
+    "longname": "src/executables/conda.js~CondaExecutable",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executables/conda.js",
+    "importStyle": "CondaExecutable",
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "src/executables/executable.js~Executable"
+    ]
+  },
+  {
+    "__docId__": 44,
+    "kind": "method",
+    "name": "setExtras",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#setExtras",
+    "access": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 45,
+    "kind": "method",
+    "name": "setEnvironments",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#setEnvironments",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 46,
+    "kind": "member",
+    "name": "environments",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#environments",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 47,
+    "kind": "method",
+    "name": "populateEnvironments",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#populateEnvironments",
+    "access": null,
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 48,
+    "kind": "method",
+    "name": "getDetails",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#getDetails",
+    "access": null,
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 49,
+    "kind": "method",
+    "name": "setDetails",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#setDetails",
+    "access": null,
+    "description": null,
+    "lineNumber": 38,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 50,
+    "kind": "member",
+    "name": "details",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#details",
+    "access": null,
+    "description": null,
+    "lineNumber": 41,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 51,
+    "kind": "method",
+    "name": "cleanVersion",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#cleanVersion",
+    "access": null,
+    "description": null,
+    "lineNumber": 46,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 52,
+    "kind": "member",
+    "name": "version",
+    "memberof": "src/executables/conda.js~CondaExecutable",
+    "static": false,
+    "longname": "src/executables/conda.js~CondaExecutable#version",
+    "access": null,
+    "description": null,
+    "lineNumber": 47,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 53,
+    "kind": "file",
+    "name": "src/executables/executable.js",
+    "content": "import { exec } from '../executive'\nimport { stat, realpathSync } from 'fs'\nimport { which } from 'shelljs'\nimport ExecutableCollection from './executable_collection'\nimport { glob } from 'glob'\nimport { homedir } from 'os'\nimport { join } from 'path'\n\n/** \n * A specific file on a computer that\n * can be run\n*/\nexport default class Executable {\n\n  /**\n   * @param {string} path the full path to the binary\n   * @param {string} command a command that executes this file\n   * @param {boolean} isDefault whether the command is first in the PATH\n   */\n  constructor (path, command, isDefault) {\n    /**\n     * Any paths that you can find this executable at (symlinked or otherwise)\n     * @type {string[]} path \n     */\n    this.paths = path ? [ path ] : []\n    /**\n     * The commands for which this executable is first in line to run\n     * e.g., running which returns it\n     * @type {string[]}\n     */\n    this.defaultCommands = []\n    /**\n     * Is this executable the default for any commands?\n     * @type {boolean}\n     * @todo I think this only exists because of legacy,\n     * should probably get rid of it and replace with examining\n     * defaultCommands instead\n     */\n    this.isDefault = isDefault || false\n    if (this.isDefault) {\n      this.addCommand(command)\n    }\n  }\n\n  /**\n   * Take any rescued error and attach it to the object, e.g.\n   * pass errors from the command line to the end user\n   * @param {Error} error an error object, typically rescued from elsewhere\n   */\n  addError (error) {\n    if (!this.error) {\n      this.errors = []\n    }\n    this.errors.push({\n      error: error,\n      message: error.message,\n      stack: error.stack\n    })\n  }\n\n  /**\n   * Add a command that this executable is first in line for, \n   * e.g. if you run blahblah from the shell this executes\n   * @param {string} command\n   */\n  addCommand (command) {\n    if (command && this.defaultCommands.indexOf(command) === -1) {\n      this.defaultCommands.push(command)\n    }\n  }\n\n  /**\n   * When merging an ExecutableCollection, this is what you group\n   * the executables by. Mostly exists because PipExecutable on\n   * Windows has different paths but point to the same package\n   * install directory, which makes them equivalent.\n   * @type {string}\n   * @return {string} the value that makes the executable unique\n   */\n  get mergeField () {\n    return this.realpath\n  }\n\n  /**\n   * Gets the version of the executable by shelling out and \n   * running --version\n   * @return {Promise<string>} A promise to the version\n   */\n  requestVersion () {\n    return new Promise((resolve, reject) => {\n      exec(`${this.path} --version`, (error, stdout, stderr) => {\n        if (error) {\n          reject(error)\n        }\n        resolve(stdout || stderr)\n      })\n    })\n  }\n\n  /**\n   * Given a version-y string, do slight cleanup and set the\n   * executable's rawVersion. Typically comes from stdout/stderr.\n   * @param {string} version the version string, fresh from terminal output\n   */\n  setRawVersion (version) {\n    /**\n     * The raw output from stdout/stderr of --version\n     * @type {string}\n    */\n    this.rawVersion = version.trim()\n  }\n\n  /**\n   * Clean up the rawVersion, pulling out the actual version number\n   * @todo should probably rename this\n   */\n  cleanVersion () {\n    /**\n     * The version number of the program, typically cleaned up in\n     * a subclass\n     * @type {string}\n    */\n    this.version = this.rawVersion\n  }\n\n  /**\n   * Query for and set the rawVersion and version\n   * @return {Promise}\n   */\n  setVersion () {\n    return this.requestVersion()\n      .then(version => { this.setRawVersion(version) })\n      .then(() => { this.cleanVersion() })\n      .catch(error => {\n        this.addError(error)\n        return this\n      })\n  }\n\n  /**\n   * Query for the executable file's creation/modification/access time\n   * and save it to the object\n   * @return {Promise}\n   */\n  setStats () {\n    return new Promise((resolve, reject) => {\n      stat(this.path, (error, stats) => {\n        // TODO\n        if (error) {\n          reject(error)\n        } else {\n          this.atime = stats.atime\n          this.ctime = stats.ctime\n          this.mtime = stats.mtime\n        }\n        resolve(this)\n      })\n    })\n  }\n\n  /**\n   * When you're looking for a path, but don't necessarily care\n   * if it's the symlinked one or the non-symlinked on?\n   * @todo it says 'FIXME' but I think it should just be 'get rid of me'\n   * @type {string}\n   * @return {string} the best known path for the executable\n   */\n  get path () {\n    try {\n      return this.realpath\n    } catch (e) {\n      return this.paths[0]\n    }\n  }\n\n  /**\n   * The path of the executable, or the target of a symlinked executable\n   * @return {string} The executable file's path\n   */\n  get realpath () {\n    if (!this._realpath) {\n      try {\n        this._realpath = realpathSync(this.paths[0])\n      } catch (err) {\n        this._realpath = this.paths[0]\n        this.addError(err)\n      }\n    }\n    return this._realpath\n  }\n\n  /**\n   * Set the realpath\n   * @param {string} the new true path\n   */\n  set realpath (path) {\n    this._realpath = path\n  }\n\n  /**\n   * Fills in all of the details of the executable\n   * @return {Promise}\n   */\n  populate () {\n    return Promise.all([\n      this.setVersion(),\n      this.setStats()\n    ])\n    .then(() => this.setExtras())\n    .then(() => this)\n    .catch((error) => {\n      this.addError(error)\n      return this\n    })\n  }\n\n  /**\n   * Subclasses that need extra details (lists of packages, etc) \n   * override this method\n   * @abstract\n   * @return {Promise}\n   */\n  setExtras () {\n    return Promise.resolve(this)\n  }\n\n  /**\n   * Adds a known path to this executable (e.g. a symlink)\n   */\n  addPath (path) {\n    if (path && this.paths.indexOf(path) === -1) {\n      this.paths.push(path)\n    }\n  }\n\n  /**\n   * Converts the executable's data to a JSON-friendly object\n   * it's mostly so we can rename _realpath to realpath\n   */\n  toJSON () {\n    return Object.keys(this).reduce((obj, key) => {\n      if (key === '_realpath') {\n        obj['realpath'] = this.realpath\n      } else {\n        obj[key] = this[key]\n      }\n      return obj\n    }, {})\n  }\n\n  /**\n   * Given a command name, creates an Executable from the executable\n   * file that would have been run had you typed the command in (e.g. which)\n   * @return {Promise<Executable>} the discovered executable\n   * @todo what if one is not found?\n   */\n  static findOne (command) {\n    return new Promise((resolve, reject) => {\n      let path = which(command).toString()\n      let executable = new (this)(path, command, true)\n      resolve(executable)\n    })\n  }\n\n  /**\n   * Given a command name or list of commands, returns an ExecutableCollection\n   * of all the executables with that name your computer might know about\n   * Looks in the path as well as looking in common paths.\n   * The Executables are all merged together, so you don't have different\n   * symlinks pointing at the same file.\n   * Each actual binary file yields one Executable\n   * @param {string|string[]} command the command or a list of commands\n   * @return {Promise<ExecutableCollection>} the discovered executables\n   */\n  static findAll (command) {\n    if (Array.isArray(command)) {\n      let promises = command.map(c => this.findAllWithoutMerge(c))\n      return Promise.all(promises)\n        .then(nested => ExecutableCollection.from([]).concat(...nested))\n        .then(executables => executables.merge())\n    } else {\n      return this.findAllWithoutMerge(command)\n        .then(executables => executables.merge())\n    }\n  }\n\n  /**\n   * Given a command name or list of commands, returns an ExecutableCollection\n   * of all the executables with that name your computer might know about\n   * Looks in the path as well as looking in common paths.\n   * The Executables are not merged\n   * Each path yields one Executable\n   * @param {string} command the command\n   * @return {Promise<ExecutableCollection>} the discovered executables\n   */\n  static findAllWithoutMerge (command) {\n    return Promise.all([\n      this.findByWhich(command),\n      this.findByPaths(command)\n    ]).then(exeArray => {\n      return new ExecutableCollection(...exeArray[0], ...exeArray[1])\n    })\n  }\n\n  /**\n   * Uses which to find all of the paths for a given command\n   * @param {string} command the command\n   * @return {Promise<ExecutableCollection>} the found executables\n   */\n  static findByWhich (command) {\n    return new Promise((resolve, reject) => {\n      let executables = which('-a', command).map((path, index) => {\n        // eslint-disable-next-line\n        return new (this)(path, command, index === 0)\n      })\n\n      executables = new ExecutableCollection(...executables)\n      resolve(executables)\n    })\n  }\n\n  /**\n   * Manually searches paths to find executables with a given name\n   * @param {string} command the command\n   * @return {Promise<ExecutableCollection>} the found executables\n   */\n  static findByPaths (command) {\n    let promises = this.searchPaths.map((path) => {\n      return new Promise((resolve, reject) => {\n        glob(join(path, command), (error, paths) => {\n          if (error) {\n            reject(error)\n          } else {\n            let executables = paths.map(path => new (this)(path))\n            executables = new ExecutableCollection(...executables)\n            resolve(executables)\n          }\n        })\n      })\n    })\n\n    return Promise.all(promises)\n      .then(nested => ExecutableCollection.from([]).concat(...nested))\n  }\n\n  /**\n   * Paths to manually search in for executables\n   */\n  static get searchPaths () {\n    return [\n      '/usr/local/Cellar/python*/*/bin',\n      join(homedir(), 'anaconda*/bin/python*'),\n      '/usr/local/bin',\n      '/usr/bin/'\n    ]\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/executables/executable.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 54,
+    "kind": "class",
+    "name": "Executable",
+    "memberof": "src/executables/executable.js",
+    "static": true,
+    "longname": "src/executables/executable.js~Executable",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executables/executable.js",
+    "importStyle": "Executable",
+    "description": "A specific file on a computer that\ncan be run",
+    "lineNumber": 13,
+    "interface": false
+  },
+  {
+    "__docId__": 55,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#constructor",
+    "access": null,
+    "description": "",
+    "lineNumber": 20,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "path",
+        "description": "the full path to the binary"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "command",
+        "description": "a command that executes this file"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "isDefault",
+        "description": "whether the command is first in the PATH"
+      }
+    ]
+  },
+  {
+    "__docId__": 56,
+    "kind": "member",
+    "name": "paths",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#paths",
+    "access": null,
+    "description": "Any paths that you can find this executable at (symlinked or otherwise)",
+    "lineNumber": 25,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 57,
+    "kind": "member",
+    "name": "defaultCommands",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#defaultCommands",
+    "access": null,
+    "description": "The commands for which this executable is first in line to run\ne.g., running which returns it",
+    "lineNumber": 31,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 58,
+    "kind": "member",
+    "name": "isDefault",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#isDefault",
+    "access": null,
+    "description": "Is this executable the default for any commands?",
+    "lineNumber": 39,
+    "todo": [
+      "I think this only exists because of legacy,\nshould probably get rid of it and replace with examining\ndefaultCommands instead"
+    ],
+    "type": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 59,
+    "kind": "method",
+    "name": "addError",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#addError",
+    "access": null,
+    "description": "Take any rescued error and attach it to the object, e.g.\npass errors from the command line to the end user",
+    "lineNumber": 50,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Error"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "error",
+        "description": "an error object, typically rescued from elsewhere"
+      }
+    ]
+  },
+  {
+    "__docId__": 60,
+    "kind": "member",
+    "name": "errors",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#errors",
+    "access": null,
+    "description": null,
+    "lineNumber": 52,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 61,
+    "kind": "method",
+    "name": "addCommand",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#addCommand",
+    "access": null,
+    "description": "Add a command that this executable is first in line for, \ne.g. if you run blahblah from the shell this executes",
+    "lineNumber": 66,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "command",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 62,
+    "kind": "get",
+    "name": "mergeField",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#mergeField",
+    "access": null,
+    "description": "When merging an ExecutableCollection, this is what you group\nthe executables by. Mostly exists because PipExecutable on\nWindows has different paths but point to the same package\ninstall directory, which makes them equivalent.",
+    "lineNumber": 80,
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "the value that makes the executable unique"
+    },
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 63,
+    "kind": "method",
+    "name": "requestVersion",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#requestVersion",
+    "access": null,
+    "description": "Gets the version of the executable by shelling out and \nrunning --version",
+    "lineNumber": 89,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<string>"
+      ],
+      "spread": false,
+      "description": "A promise to the version"
+    }
+  },
+  {
+    "__docId__": 64,
+    "kind": "method",
+    "name": "setRawVersion",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#setRawVersion",
+    "access": null,
+    "description": "Given a version-y string, do slight cleanup and set the\nexecutable's rawVersion. Typically comes from stdout/stderr.",
+    "lineNumber": 105,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "version",
+        "description": "the version string, fresh from terminal output"
+      }
+    ]
+  },
+  {
+    "__docId__": 65,
+    "kind": "member",
+    "name": "rawVersion",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#rawVersion",
+    "access": null,
+    "description": "The raw output from stdout/stderr of --version",
+    "lineNumber": 110,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "method",
+    "name": "cleanVersion",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#cleanVersion",
+    "access": null,
+    "description": "Clean up the rawVersion, pulling out the actual version number",
+    "lineNumber": 117,
+    "todo": [
+      "should probably rename this"
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 67,
+    "kind": "member",
+    "name": "version",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#version",
+    "access": null,
+    "description": "The version number of the program, typically cleaned up in\na subclass",
+    "lineNumber": 123,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 68,
+    "kind": "method",
+    "name": "setVersion",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#setVersion",
+    "access": null,
+    "description": "Query for and set the rawVersion and version",
+    "lineNumber": 130,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 69,
+    "kind": "method",
+    "name": "setStats",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#setStats",
+    "access": null,
+    "description": "Query for the executable file's creation/modification/access time\nand save it to the object",
+    "lineNumber": 145,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 70,
+    "kind": "member",
+    "name": "atime",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#atime",
+    "access": null,
+    "description": null,
+    "lineNumber": 152,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "member",
+    "name": "ctime",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#ctime",
+    "access": null,
+    "description": null,
+    "lineNumber": 153,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 72,
+    "kind": "member",
+    "name": "mtime",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#mtime",
+    "access": null,
+    "description": null,
+    "lineNumber": 154,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 73,
+    "kind": "get",
+    "name": "path",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#path",
+    "access": null,
+    "description": "When you're looking for a path, but don't necessarily care\nif it's the symlinked one or the non-symlinked on?",
+    "lineNumber": 168,
+    "todo": [
+      "it says 'FIXME' but I think it should just be 'get rid of me'"
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "the best known path for the executable"
+    },
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 74,
+    "kind": "get",
+    "name": "realpath",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#realpath",
+    "access": null,
+    "description": "The path of the executable, or the target of a symlinked executable",
+    "lineNumber": 180,
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "The executable file's path"
+    },
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 75,
+    "kind": "member",
+    "name": "_realpath",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#_realpath",
+    "access": null,
+    "description": null,
+    "lineNumber": 183,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 76,
+    "kind": "member",
+    "name": "_realpath",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#_realpath",
+    "access": null,
+    "description": null,
+    "lineNumber": 185,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 77,
+    "kind": "set",
+    "name": "realpath",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#realpath",
+    "access": null,
+    "description": "Set the realpath",
+    "lineNumber": 196,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "the",
+        "description": "new true path"
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 78,
+    "kind": "member",
+    "name": "_realpath",
+    "memberof": "src/executables/executable.js~Executable",
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#_realpath",
+    "access": null,
+    "description": null,
+    "lineNumber": 197,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 79,
+    "kind": "method",
+    "name": "populate",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#populate",
+    "access": null,
+    "description": "Fills in all of the details of the executable",
+    "lineNumber": 204,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 80,
+    "kind": "method",
+    "name": "setExtras",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#setExtras",
+    "access": null,
+    "description": "Subclasses that need extra details (lists of packages, etc) \noverride this method",
+    "lineNumber": 223,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "abstract": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "method",
+    "name": "addPath",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#addPath",
+    "access": null,
+    "description": "Adds a known path to this executable (e.g. a symlink)",
+    "lineNumber": 230,
+    "params": [
+      {
+        "name": "path",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 82,
+    "kind": "method",
+    "name": "toJSON",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable.js~Executable#toJSON",
+    "access": null,
+    "description": "Converts the executable's data to a JSON-friendly object\nit's mostly so we can rename _realpath to realpath",
+    "lineNumber": 240,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 83,
+    "kind": "method",
+    "name": "findOne",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/executable.js~Executable.findOne",
+    "access": null,
+    "description": "Given a command name, creates an Executable from the executable\nfile that would have been run had you typed the command in (e.g. which)",
+    "lineNumber": 257,
+    "todo": [
+      "what if one is not found?"
+    ],
+    "params": [
+      {
+        "name": "command",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<Executable>"
+      ],
+      "spread": false,
+      "description": "the discovered executable"
+    }
+  },
+  {
+    "__docId__": 84,
+    "kind": "method",
+    "name": "findAll",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/executable.js~Executable.findAll",
+    "access": null,
+    "description": "Given a command name or list of commands, returns an ExecutableCollection\nof all the executables with that name your computer might know about\nLooks in the path as well as looking in common paths.\nThe Executables are all merged together, so you don't have different\nsymlinks pointing at the same file.\nEach actual binary file yields one Executable",
+    "lineNumber": 275,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string",
+          "string[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "command",
+        "description": "the command or a list of commands"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<ExecutableCollection>"
+      ],
+      "spread": false,
+      "description": "the discovered executables"
+    }
+  },
+  {
+    "__docId__": 85,
+    "kind": "method",
+    "name": "findAllWithoutMerge",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/executable.js~Executable.findAllWithoutMerge",
+    "access": null,
+    "description": "Given a command name or list of commands, returns an ExecutableCollection\nof all the executables with that name your computer might know about\nLooks in the path as well as looking in common paths.\nThe Executables are not merged\nEach path yields one Executable",
+    "lineNumber": 296,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "command",
+        "description": "the command"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<ExecutableCollection>"
+      ],
+      "spread": false,
+      "description": "the discovered executables"
+    }
+  },
+  {
+    "__docId__": 86,
+    "kind": "method",
+    "name": "findByWhich",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/executable.js~Executable.findByWhich",
+    "access": null,
+    "description": "Uses which to find all of the paths for a given command",
+    "lineNumber": 310,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "command",
+        "description": "the command"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<ExecutableCollection>"
+      ],
+      "spread": false,
+      "description": "the found executables"
+    }
+  },
+  {
+    "__docId__": 87,
+    "kind": "method",
+    "name": "findByPaths",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/executable.js~Executable.findByPaths",
+    "access": null,
+    "description": "Manually searches paths to find executables with a given name",
+    "lineNumber": 327,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "command",
+        "description": "the command"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<ExecutableCollection>"
+      ],
+      "spread": false,
+      "description": "the found executables"
+    }
+  },
+  {
+    "__docId__": 88,
+    "kind": "get",
+    "name": "searchPaths",
+    "memberof": "src/executables/executable.js~Executable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/executable.js~Executable.searchPaths",
+    "access": null,
+    "description": "Paths to manually search in for executables",
+    "lineNumber": 349,
+    "type": {
+      "types": [
+        "string[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 89,
+    "kind": "file",
+    "name": "src/executables/executable_collection.js",
+    "content": "export default class ExecutableCollection extends Array {\n\n  populate () {\n    let promises = this.map(p => p.populate())\n    return Promise.all(promises)\n      .then(executables => new ExecutableCollection(...this))\n  }\n\n  merge () {\n    let tmp = {}\n\n    /* Go through every executable... */\n    for (let e of this) {\n      /* Haven't seen the realpath before? Add as new! */\n      if (!tmp[e.realpath]) {\n        tmp[e.realpath] = e\n        continue\n      }\n\n      /* Seen it already? Add the path as another 'known' path */\n      tmp[e.realpath].addPath(e.path)\n      if (e.isDefault && e.defaultCommands.length > 0) {\n        tmp[e.realpath].addCommand(e.defaultCommands[0])\n      }\n    }\n\n    /* Grab each unique key. Object.values doesn't work */\n    let uniques = Object.keys(tmp).map(function (key) {\n      return tmp[key]\n    })\n\n    return new ExecutableCollection(...uniques)\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/executables/executable_collection.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 90,
+    "kind": "class",
+    "name": "ExecutableCollection",
+    "memberof": "src/executables/executable_collection.js",
+    "static": true,
+    "longname": "src/executables/executable_collection.js~ExecutableCollection",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executables/executable_collection.js",
+    "importStyle": "ExecutableCollection",
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "Array"
+    ]
+  },
+  {
+    "__docId__": 91,
+    "kind": "method",
+    "name": "populate",
+    "memberof": "src/executables/executable_collection.js~ExecutableCollection",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable_collection.js~ExecutableCollection#populate",
+    "access": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 92,
+    "kind": "method",
+    "name": "merge",
+    "memberof": "src/executables/executable_collection.js~ExecutableCollection",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/executable_collection.js~ExecutableCollection#merge",
+    "access": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 93,
+    "kind": "file",
+    "name": "src/executables/jupyter.js",
+    "content": "import { exec } from '../executive'\nimport { realpath } from 'fs'\nimport Executable from './executable'\n\nexport default class JupyterExecutable extends Executable {\n\n  setExtras () {\n    return Promise.all([\n      this.getKernels()\n    ])\n  }\n\n  setKernelRealpaths () {\n    let promises = this.kernels.map(kernel => {\n      return new Promise((resolve, reject) => {\n        realpath(kernel.spec.argv[0], (error, path) => {\n          // TODO\n          if (error) {\n            reject(error)\n          }\n          kernel.realpath = path\n          resolve(this)\n        })\n      })\n    })\n    return Promise.all(promises)\n  }\n\n  cleanVersion () {\n    this.version = this.rawVersion.trim()\n  }\n\n  getKernels () {\n    return new Promise((resolve, reject) => {\n      exec(`${this.path} kernelspec list --json`, (error, stdout, stderr) => {\n        // TODO\n        if (error) {\n          reject(error)\n        }\n\n        let kernelspecs = JSON.parse(stdout).kernelspecs\n        this.kernels = Object.keys(kernelspecs).map(function (key) {\n          return kernelspecs[key]\n        })\n\n        resolve(this.setKernelRealpaths())\n      })\n    })\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/executables/jupyter.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 94,
+    "kind": "class",
+    "name": "JupyterExecutable",
+    "memberof": "src/executables/jupyter.js",
+    "static": true,
+    "longname": "src/executables/jupyter.js~JupyterExecutable",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executables/jupyter.js",
+    "importStyle": "JupyterExecutable",
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "src/executables/executable.js~Executable"
+    ]
+  },
+  {
+    "__docId__": 95,
+    "kind": "method",
+    "name": "setExtras",
+    "memberof": "src/executables/jupyter.js~JupyterExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/jupyter.js~JupyterExecutable#setExtras",
+    "access": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 96,
+    "kind": "method",
+    "name": "setKernelRealpaths",
+    "memberof": "src/executables/jupyter.js~JupyterExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/jupyter.js~JupyterExecutable#setKernelRealpaths",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 97,
+    "kind": "method",
+    "name": "cleanVersion",
+    "memberof": "src/executables/jupyter.js~JupyterExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/jupyter.js~JupyterExecutable#cleanVersion",
+    "access": null,
+    "description": null,
+    "lineNumber": 29,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 98,
+    "kind": "member",
+    "name": "version",
+    "memberof": "src/executables/jupyter.js~JupyterExecutable",
+    "static": false,
+    "longname": "src/executables/jupyter.js~JupyterExecutable#version",
+    "access": null,
+    "description": null,
+    "lineNumber": 30,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 99,
+    "kind": "method",
+    "name": "getKernels",
+    "memberof": "src/executables/jupyter.js~JupyterExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/jupyter.js~JupyterExecutable#getKernels",
+    "access": null,
+    "description": null,
+    "lineNumber": 33,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 100,
+    "kind": "member",
+    "name": "kernels",
+    "memberof": "src/executables/jupyter.js~JupyterExecutable",
+    "static": false,
+    "longname": "src/executables/jupyter.js~JupyterExecutable#kernels",
+    "access": null,
+    "description": null,
+    "lineNumber": 42,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 101,
+    "kind": "file",
+    "name": "src/executables/pip.js",
+    "content": "import { exec } from '../executive'\nimport { ls } from 'shelljs'\nimport { access, constants } from 'fs'\nimport Executable from './executable'\n\nexport default class PipExecutable extends Executable {\n\n  setExtras () {\n    return Promise.all([\n      this.getPackages(),\n      this.getPackageDirectory()\n    ])\n  }\n\n  cleanVersion () {\n    try {\n      this.version = this.rawVersion.trim().match(/pip ([\\d.]+)/i)[1]\n      this.pythonVersion = this.rawVersion.trim().match(/python ([\\d.]+)/i)[1]\n    } catch (err) {\n      // this means the python is broken\n    }\n  }\n\n  getPackageDirectory () {\n    this.packageDir = this.rawVersion.trim().match(/pip [\\d.]+ from (.*) \\(python/)[1]\n    this.packageDirDetails = ls('-dl', this.packageDir)[0]\n    return new Promise((resolve, reject) => {\n      access(this.packageDir, constants.R_OK | constants.W_OK, (err) => {\n        this.access = !err\n        resolve(this)\n      })\n    })\n  }\n\n  get mergeField () {\n    return this.packageDir ? this.packageDir : this.realpath\n  }\n\n  getPackageListing () {\n    return new Promise((resolve, reject) => {\n      let listCommand = `${this.path} list`\n\n      exec(listCommand, (error, stdout, stderr) => {\n        if (error) {\n          reject(error)\n        }\n        resolve(stdout)\n      })\n    })\n  }\n\n  getPackages (legacy = true) {\n    return this.getPackageListing()\n      .then((listing) => {\n        this.packages = PipExecutable.parsePackageList(listing)\n        return this\n      })\n  }\n\n  static parsePackageList (list) {\n    if (!list) {\n      return []\n    }\n    // This replace gets rid of the headers\n    let lines = list.replace(/[\\s\\S]*-{5,}/gm, '').trim().split('\\n')\n\n    // Convert them to objects, remove any blanks\n    return lines.map(PipExecutable.parsePackageLine).filter(p => p)\n  }\n\n  static parsePackageLine (line) {\n    if (line.indexOf('(') !== -1) {\n      return PipExecutable.parseLegacyPackageLine(line)\n    } else {\n      return PipExecutable.parseColumnPackageLine(line)\n    }\n  }\n\n  static parseLegacyPackageLine (line) {\n    let cleaned = line.trim()\n    let matches = cleaned.match(/(.*) \\((\\d.+)\\)/)\n    if (!matches) {\n      return\n    }\n    return { raw: cleaned, name: matches[1], version: matches[2] }\n  }\n\n  static parseColumnPackageLine (line) {\n    let cleaned = line.trim().replace(/\\s+/, ' ')\n    let matches = cleaned.match(/(.*)\\s+(\\d.+)/)\n    if (!matches) {\n      return\n    }\n    return { raw: cleaned, name: matches[1], version: matches[2] }\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/executables/pip.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 102,
+    "kind": "class",
+    "name": "PipExecutable",
+    "memberof": "src/executables/pip.js",
+    "static": true,
+    "longname": "src/executables/pip.js~PipExecutable",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executables/pip.js",
+    "importStyle": "PipExecutable",
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "src/executables/executable.js~Executable"
+    ]
+  },
+  {
+    "__docId__": 103,
+    "kind": "method",
+    "name": "setExtras",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#setExtras",
+    "access": null,
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 104,
+    "kind": "method",
+    "name": "cleanVersion",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#cleanVersion",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 105,
+    "kind": "member",
+    "name": "version",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#version",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 106,
+    "kind": "member",
+    "name": "pythonVersion",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#pythonVersion",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 107,
+    "kind": "method",
+    "name": "getPackageDirectory",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#getPackageDirectory",
+    "access": null,
+    "description": null,
+    "lineNumber": 24,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 108,
+    "kind": "member",
+    "name": "packageDir",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#packageDir",
+    "access": null,
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 109,
+    "kind": "member",
+    "name": "packageDirDetails",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#packageDirDetails",
+    "access": null,
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 110,
+    "kind": "member",
+    "name": "access",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#access",
+    "access": null,
+    "description": null,
+    "lineNumber": 29,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 111,
+    "kind": "get",
+    "name": "mergeField",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#mergeField",
+    "access": null,
+    "description": null,
+    "lineNumber": 35,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 112,
+    "kind": "method",
+    "name": "getPackageListing",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#getPackageListing",
+    "access": null,
+    "description": null,
+    "lineNumber": 39,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 113,
+    "kind": "method",
+    "name": "getPackages",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#getPackages",
+    "access": null,
+    "description": null,
+    "lineNumber": 52,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "legacy",
+        "optional": true,
+        "types": [
+          "boolean"
+        ],
+        "defaultRaw": true,
+        "defaultValue": "true"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 114,
+    "kind": "member",
+    "name": "packages",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "static": false,
+    "longname": "src/executables/pip.js~PipExecutable#packages",
+    "access": null,
+    "description": null,
+    "lineNumber": 55,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 115,
+    "kind": "method",
+    "name": "parsePackageList",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/pip.js~PipExecutable.parsePackageList",
+    "access": null,
+    "description": null,
+    "lineNumber": 60,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "list",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 116,
+    "kind": "method",
+    "name": "parsePackageLine",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/pip.js~PipExecutable.parsePackageLine",
+    "access": null,
+    "description": null,
+    "lineNumber": 71,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "line",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 117,
+    "kind": "method",
+    "name": "parseLegacyPackageLine",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/pip.js~PipExecutable.parseLegacyPackageLine",
+    "access": null,
+    "description": null,
+    "lineNumber": 79,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "line",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "{\"raw\": *, \"name\": *, \"version\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 118,
+    "kind": "method",
+    "name": "parseColumnPackageLine",
+    "memberof": "src/executables/pip.js~PipExecutable",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executables/pip.js~PipExecutable.parseColumnPackageLine",
+    "access": null,
+    "description": null,
+    "lineNumber": 88,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "line",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "{\"raw\": *, \"name\": *, \"version\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 119,
+    "kind": "file",
+    "name": "src/executables/python.js",
+    "content": "import { exec } from '../executive'\nimport Executable from './executable'\n\nexport default class PythonExecutable extends Executable {\n\n  setExtras () {\n    return Promise.all([\n      this.detectInstaller(),\n      this.setSysPath()\n    ])\n    .catch(error => {\n      this.addError(error)\n      return this\n    })\n  }\n\n  cleanVersion () {\n    this.version = this.rawVersion.trim().match(/python ([\\d.\\-a-zA-Z]+)/i)[1]\n  }\n\n  setSysPath () {\n    return new Promise((resolve, reject) => {\n      let exportCmd = \"import sys; print(':::'.join(path for path in sys.path if path))\"\n      let cmd = `${this.path} -c \"${exportCmd}\"`\n      exec(cmd, (error, stdout, stderr) => {\n        // TODO\n        if (error) {\n          reject(error)\n        }\n        this.sysPath = stdout.trim().split(':::')\n        resolve(this)\n      })\n    })\n  }\n\n  detectInstaller () {\n    if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {\n      this.installer = 'Anaconda'\n    }\n\n    if (this.rawVersion && this.rawVersion.indexOf('Continuum') !== -1) {\n      this.installer = 'Anaconda'\n    }\n\n    if (this.realpath) {\n      /* OS X */\n      if (this.realpath.indexOf('Cellar') !== -1) { this.installer = 'Homebrew' }\n      if (this.realpath.indexOf('/System/Library/Frameworks/Python.framework') === 0) { this.installer = 'Default-OSX' }\n      if (this.realpath.indexOf('/Library/Frameworks/Python.framework') === 0) { this.installer = 'Python.org' }\n\n      /* Windows */\n      if (this.realpath.toUpperCase().indexOf(':\\\\PYTHON27\\\\PYTHON') !== -1) { this.installer = 'Python.org' }\n      if (this.realpath.toUpperCase().indexOf('APPDATA\\\\LOCAL\\\\PROGRAMS\\\\PYTHON') !== -1) { this.installer = 'Python.org' }\n    }\n\n    if (this.installer) {\n      this.installerSlug = this.installer.toLowerCase().replace(/[^A-Za-z]/, '')\n    }\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/executables/python.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 120,
+    "kind": "class",
+    "name": "PythonExecutable",
+    "memberof": "src/executables/python.js",
+    "static": true,
+    "longname": "src/executables/python.js~PythonExecutable",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executables/python.js",
+    "importStyle": "PythonExecutable",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "src/executables/executable.js~Executable"
+    ]
+  },
+  {
+    "__docId__": 121,
+    "kind": "method",
+    "name": "setExtras",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#setExtras",
+    "access": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 122,
+    "kind": "method",
+    "name": "cleanVersion",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#cleanVersion",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 123,
+    "kind": "member",
+    "name": "version",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#version",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 124,
+    "kind": "method",
+    "name": "setSysPath",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#setSysPath",
+    "access": null,
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 125,
+    "kind": "member",
+    "name": "sysPath",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#sysPath",
+    "access": null,
+    "description": null,
+    "lineNumber": 30,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 126,
+    "kind": "method",
+    "name": "detectInstaller",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#detectInstaller",
+    "access": null,
+    "description": null,
+    "lineNumber": 36,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 127,
+    "kind": "member",
+    "name": "installer",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installer",
+    "access": null,
+    "description": null,
+    "lineNumber": 38,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 128,
+    "kind": "member",
+    "name": "installer",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installer",
+    "access": null,
+    "description": null,
+    "lineNumber": 42,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 129,
+    "kind": "member",
+    "name": "installer",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installer",
+    "access": null,
+    "description": null,
+    "lineNumber": 47,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 130,
+    "kind": "member",
+    "name": "installer",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installer",
+    "access": null,
+    "description": null,
+    "lineNumber": 48,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 131,
+    "kind": "member",
+    "name": "installer",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installer",
+    "access": null,
+    "description": null,
+    "lineNumber": 49,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 132,
+    "kind": "member",
+    "name": "installer",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installer",
+    "access": null,
+    "description": null,
+    "lineNumber": 52,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 133,
+    "kind": "member",
+    "name": "installer",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installer",
+    "access": null,
+    "description": null,
+    "lineNumber": 53,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 134,
+    "kind": "member",
+    "name": "installerSlug",
+    "memberof": "src/executables/python.js~PythonExecutable",
+    "static": false,
+    "longname": "src/executables/python.js~PythonExecutable#installerSlug",
+    "access": null,
+    "description": null,
+    "lineNumber": 57,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 135,
+    "kind": "file",
+    "name": "src/executables/virtualenv.js",
+    "content": "import Executable from './executable'\nimport { VirtualEnv } from '../environments'\n\nexport default class VirtualEnvExecutable extends Executable {\n\n  setExtras () {\n    return this.setDetails()\n      .then(() => this.setEnvironments())\n      .then(() => this.populateEnvironments())\n      .then(() => this)\n  }\n\n  setEnvironments () {\n    return VirtualEnv.find()\n      .then((envs) => {\n        this.environments = envs\n        return this\n      })\n  }\n\n  populateEnvironments () {\n    let promises = this.environments.map((env) => env.populate())\n    return Promise.all(promises)\n  }\n\n  getDetails () {\n    return Promise.resolve({})\n  }\n\n  setDetails () {\n    return this.getDetails()\n      .then((details) => {\n        this.details = details\n        return this\n      })\n  }\n\n  cleanVersion () {\n    this.version = this.rawVersion.trim()\n  }\n\n}\n",
+    "static": true,
+    "longname": "src/executables/virtualenv.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 136,
+    "kind": "class",
+    "name": "VirtualEnvExecutable",
+    "memberof": "src/executables/virtualenv.js",
+    "static": true,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executables/virtualenv.js",
+    "importStyle": "VirtualEnvExecutable",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "interface": false,
+    "extends": [
+      "src/executables/executable.js~Executable"
+    ]
+  },
+  {
+    "__docId__": 137,
+    "kind": "method",
+    "name": "setExtras",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#setExtras",
+    "access": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 138,
+    "kind": "method",
+    "name": "setEnvironments",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#setEnvironments",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 139,
+    "kind": "member",
+    "name": "environments",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#environments",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 140,
+    "kind": "method",
+    "name": "populateEnvironments",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#populateEnvironments",
+    "access": null,
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 141,
+    "kind": "method",
+    "name": "getDetails",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#getDetails",
+    "access": null,
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 142,
+    "kind": "method",
+    "name": "setDetails",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#setDetails",
+    "access": null,
+    "description": null,
+    "lineNumber": 30,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 143,
+    "kind": "member",
+    "name": "details",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#details",
+    "access": null,
+    "description": null,
+    "lineNumber": 33,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 144,
+    "kind": "method",
+    "name": "cleanVersion",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#cleanVersion",
+    "access": null,
+    "description": null,
+    "lineNumber": 38,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 145,
+    "kind": "member",
+    "name": "version",
+    "memberof": "src/executables/virtualenv.js~VirtualEnvExecutable",
+    "static": false,
+    "longname": "src/executables/virtualenv.js~VirtualEnvExecutable#version",
+    "access": null,
+    "description": null,
+    "lineNumber": 39,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 146,
+    "kind": "file",
+    "name": "src/executables.js",
+    "content": "import Executable from './executables/executable'\nimport PipExecutable from './executables/pip'\nimport PythonExecutable from './executables/python'\nimport JupyterExecutable from './executables/jupyter'\nimport CondaExecutable from './executables/conda'\nimport VirtualEnvExecutable from './executables/virtualenv'\n\nexport {\n  Executable,\n  PipExecutable,\n  PythonExecutable,\n  JupyterExecutable,\n  CondaExecutable,\n  VirtualEnvExecutable\n}\n",
+    "static": true,
+    "longname": "src/executables.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 147,
+    "kind": "file",
+    "name": "src/executive.js",
+    "content": "import { exec as cpExec } from 'child_process'\n\nlet CACHE = {}\n\nfunction clear () {\n  CACHE = {}\n}\n\nfunction exec (command, callback, options = {}) {\n  /* Keep things in the cache for 5 seconds */\n  if (command in CACHE && Date.now() - CACHE[command].timestamp < 5000) {\n    callback(\n      CACHE[command].error,\n      CACHE[command].stdout,\n      CACHE[command].stderr\n    )\n  } else {\n    cpExec(command, (error, stdout, stderr) => {\n      CACHE[command] = {\n        error: error,\n        stdout: stdout,\n        stderr: stderr,\n        timestamp: Date.now()\n      }\n      callback(error, stdout, stderr)\n    })\n  }\n}\n\nexport {\n  clear,\n  exec\n}\n",
+    "static": true,
+    "longname": "src/executive.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 148,
+    "kind": "variable",
+    "name": "CACHE",
+    "memberof": "src/executive.js",
+    "static": true,
+    "longname": "src/executive.js~CACHE",
+    "access": null,
+    "export": false,
+    "importPath": "mcpyver/src/executive.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{}"
+      ]
+    }
+  },
+  {
+    "__docId__": 149,
+    "kind": "function",
+    "name": "clear",
+    "memberof": "src/executive.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executive.js~clear",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executive.js",
+    "importStyle": "{clear}",
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 150,
+    "kind": "function",
+    "name": "exec",
+    "memberof": "src/executive.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/executive.js~exec",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/executive.js",
+    "importStyle": "{exec}",
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "command",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "callback",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "options",
+        "optional": true,
+        "types": [
+          "{}"
+        ],
+        "defaultRaw": {},
+        "defaultValue": "{}"
+      }
+    ]
+  },
+  {
+    "__docId__": 151,
+    "kind": "file",
+    "name": "src/functions.js",
+    "content": "import { CondaExecutable, PipExecutable, PythonExecutable, JupyterExecutable, VirtualEnvExecutable } from './executables'\n\nfunction getVirtualEnv () {\n  return VirtualEnvExecutable.findOne('virtualenv')\n    .then(v => v.populate())\n}\n\nfunction getConda () {\n  return CondaExecutable.findOne('conda')\n    .then(c => c.populate())\n}\n\nfunction getJupyter () {\n  return JupyterExecutable.findOne('jupyer')\n    .then(j => j.populate())\n}\n\nfunction getJupyterList () {\n  return JupyterExecutable.findAll('jupyter')\n    .then(e => e.populate())\n}\n\nfunction pythonCommands () {\n  const python2Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => 'python2.' + i)\n  const python3Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => 'python3.' + i)\n  return ['python', 'python2', 'python3', ...python2Commands, ...python3Commands]\n}\n\nfunction getPythonList () {\n  return PythonExecutable.findAll(pythonCommands())\n    .then(e => e.populate())\n}\n\nfunction getPipList () {\n  return PipExecutable.findAll(['pip', 'pip3'])\n    .then(e => e.populate())\n}\n\nexport {\n  getConda,\n  getVirtualEnv,\n  getJupyter,\n  getJupyterList,\n  getPipList,\n  getPythonList\n}\n",
+    "static": true,
+    "longname": "src/functions.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 152,
+    "kind": "function",
+    "name": "pythonCommands",
+    "memberof": "src/functions.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/functions.js~pythonCommands",
+    "access": null,
+    "export": false,
+    "importPath": "mcpyver/src/functions.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 23,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "string[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 153,
+    "kind": "function",
+    "name": "getConda",
+    "memberof": "src/functions.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/functions.js~getConda",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/functions.js",
+    "importStyle": "{getConda}",
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 154,
+    "kind": "function",
+    "name": "getVirtualEnv",
+    "memberof": "src/functions.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/functions.js~getVirtualEnv",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/functions.js",
+    "importStyle": "{getVirtualEnv}",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 155,
+    "kind": "function",
+    "name": "getJupyter",
+    "memberof": "src/functions.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/functions.js~getJupyter",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/functions.js",
+    "importStyle": "{getJupyter}",
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 156,
+    "kind": "function",
+    "name": "getJupyterList",
+    "memberof": "src/functions.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/functions.js~getJupyterList",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/functions.js",
+    "importStyle": "{getJupyterList}",
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 157,
+    "kind": "function",
+    "name": "getPipList",
+    "memberof": "src/functions.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/functions.js~getPipList",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/functions.js",
+    "importStyle": "{getPipList}",
+    "description": null,
+    "lineNumber": 34,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 158,
+    "kind": "function",
+    "name": "getPythonList",
+    "memberof": "src/functions.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/functions.js~getPythonList",
+    "access": null,
+    "export": true,
+    "importPath": "mcpyver/src/functions.js",
+    "importStyle": "{getPythonList}",
+    "description": null,
+    "lineNumber": 29,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 159,
+    "kind": "file",
+    "name": "src/index.js",
+    "content": "// import { Executable, PipExecutable, PythonExecutable } from './executables'\n// import VirtualEnv from './virtualenv'\n// import Conda from './conda'\n// import Command from './command'\nimport { getVirtualEnv, getConda, getJupyter, getJupyterList, getPipList, getPythonList } from './functions'\n\nexport {\n  getConda,\n  getVirtualEnv,\n  getJupyter,\n  getJupyterList,\n  getPipList,\n  getPythonList\n}\n",
+    "static": true,
+    "longname": "src/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 161,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 162,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 163,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 164,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 165,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 166,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 167,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 168,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 169,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 170,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 171,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 172,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 173,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 174,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 175,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 176,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 177,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 178,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 179,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 180,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 181,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 182,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 183,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 184,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 185,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 186,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 187,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 188,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 189,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 190,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 191,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 192,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 193,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 194,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 195,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 196,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 197,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 198,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 199,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 200,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 201,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 202,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 203,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 204,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 205,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 206,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 207,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "lineNumber": 193,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 209,
+    "kind": "external",
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 210,
+    "kind": "external",
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 211,
+    "kind": "external",
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 212,
+    "kind": "external",
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 213,
+    "kind": "external",
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 214,
+    "kind": "external",
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 215,
+    "kind": "external",
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 216,
+    "kind": "external",
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 34,
+    "builtinExternal": true
+  }
+]

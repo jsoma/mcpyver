@@ -1,0 +1,184 @@
+{
+  "coverage": "21.05%",
+  "expectCount": 133,
+  "actualCount": 28,
+  "files": {
+    "src/environments/condaenv.js": {
+      "expectCount": 15,
+      "actualCount": 0,
+      "undocumentLines": [
+        6,
+        10,
+        88,
+        8,
+        81,
+        14,
+        44,
+        69,
+        11,
+        60,
+        30,
+        39,
+        55,
+        26,
+        35
+      ]
+    },
+    "src/executables/conda.js": {
+      "expectCount": 10,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        46,
+        41,
+        16,
+        26,
+        21,
+        38,
+        14,
+        7,
+        47
+      ]
+    },
+    "src/environments/environment.js": {
+      "expectCount": 8,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        5,
+        7,
+        32,
+        25,
+        21,
+        36,
+        12
+      ]
+    },
+    "src/executables/executable.js": {
+      "expectCount": 32,
+      "actualCount": 28,
+      "undocumentLines": [
+        152,
+        153,
+        52,
+        154
+      ]
+    },
+    "src/executables/executable_collection.js": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        1,
+        9,
+        3
+      ]
+    },
+    "src/executables/jupyter.js": {
+      "expectCount": 7,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        29,
+        33,
+        42,
+        7,
+        13,
+        30
+      ]
+    },
+    "src/executables/pip.js": {
+      "expectCount": 17,
+      "actualCount": 0,
+      "undocumentLines": [
+        6,
+        29,
+        15,
+        24,
+        39,
+        52,
+        35,
+        25,
+        26,
+        55,
+        88,
+        79,
+        71,
+        60,
+        18,
+        8,
+        17
+      ]
+    },
+    "src/executables/python.js": {
+      "expectCount": 9,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        17,
+        36,
+        38,
+        57,
+        6,
+        21,
+        30,
+        18
+      ]
+    },
+    "src/environments/virtualenv.js": {
+      "expectCount": 14,
+      "actualCount": 0,
+      "undocumentLines": [
+        9,
+        14,
+        48,
+        11,
+        68,
+        52,
+        13,
+        28,
+        21,
+        36,
+        17,
+        41,
+        25,
+        33
+      ]
+    },
+    "src/executables/virtualenv.js": {
+      "expectCount": 10,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        38,
+        33,
+        16,
+        26,
+        21,
+        30,
+        13,
+        6,
+        39
+      ]
+    },
+    "src/executive.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        9
+      ]
+    },
+    "src/functions.js": {
+      "expectCount": 6,
+      "actualCount": 0,
+      "undocumentLines": [
+        8,
+        13,
+        18,
+        34,
+        29,
+        3
+      ]
+    }
+  }
+}

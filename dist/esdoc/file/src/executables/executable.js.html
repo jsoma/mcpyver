@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/executables/executable.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/jsoma/mcpyver" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-clear">clear</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-exec">exec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getConda">getConda</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getJupyter">getJupyter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getJupyterList">getJupyterList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getPipList">getPipList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getPythonList">getPythonList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getVirtualEnv">getVirtualEnv</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">environments</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/environments/condaenv.js~CondaEnv.html">CondaEnv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/environments/environment.js~Environment.html">Environment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/environments/virtualenv.js~VirtualEnv.html">VirtualEnv</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">executables</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/conda.js~CondaExecutable.html">CondaExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/executable.js~Executable.html">Executable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/executable_collection.js~ExecutableCollection.html">ExecutableCollection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/jupyter.js~JupyterExecutable.html">JupyterExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/pip.js~PipExecutable.html">PipExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/python.js~PythonExecutable.html">PythonExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/virtualenv.js~VirtualEnvExecutable.html">VirtualEnvExecutable</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/executables/executable.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { exec } from &apos;../executive&apos;
+import { stat, realpathSync } from &apos;fs&apos;
+import { which } from &apos;shelljs&apos;
+import ExecutableCollection from &apos;./executable_collection&apos;
+import { glob } from &apos;glob&apos;
+import { homedir } from &apos;os&apos;
+import { join } from &apos;path&apos;
+
+/** 
+ * A specific file on a computer that
+ * can be run
+*/
+export default class Executable {
+
+  /**
+   * @param {string} path the full path to the binary
+   * @param {string} command a command that executes this file
+   * @param {boolean} isDefault whether the command is first in the PATH
+   */
+  constructor (path, command, isDefault) {
+    /**
+     * Any paths that you can find this executable at (symlinked or otherwise)
+     * @type {string[]} path 
+     */
+    this.paths = path ? [ path ] : []
+    /**
+     * The commands for which this executable is first in line to run
+     * e.g., running which returns it
+     * @type {string[]}
+     */
+    this.defaultCommands = []
+    /**
+     * Is this executable the default for any commands?
+     * @type {boolean}
+     * @todo I think this only exists because of legacy,
+     * should probably get rid of it and replace with examining
+     * defaultCommands instead
+     */
+    this.isDefault = isDefault || false
+    if (this.isDefault) {
+      this.addCommand(command)
+    }
+  }
+
+  /**
+   * Take any rescued error and attach it to the object, e.g.
+   * pass errors from the command line to the end user
+   * @param {Error} error an error object, typically rescued from elsewhere
+   */
+  addError (error) {
+    if (!this.error) {
+      this.errors = []
+    }
+    this.errors.push({
+      error: error,
+      message: error.message,
+      stack: error.stack
+    })
+  }
+
+  /**
+   * Add a command that this executable is first in line for, 
+   * e.g. if you run blahblah from the shell this executes
+   * @param {string} command
+   */
+  addCommand (command) {
+    if (command &amp;&amp; this.defaultCommands.indexOf(command) === -1) {
+      this.defaultCommands.push(command)
+    }
+  }
+
+  /**
+   * When merging an ExecutableCollection, this is what you group
+   * the executables by. Mostly exists because PipExecutable on
+   * Windows has different paths but point to the same package
+   * install directory, which makes them equivalent.
+   * @type {string}
+   * @return {string} the value that makes the executable unique
+   */
+  get mergeField () {
+    return this.realpath
+  }
+
+  /**
+   * Gets the version of the executable by shelling out and 
+   * running --version
+   * @return {Promise&lt;string&gt;} A promise to the version
+   */
+  requestVersion () {
+    return new Promise((resolve, reject) =&gt; {
+      exec(`${this.path} --version`, (error, stdout, stderr) =&gt; {
+        if (error) {
+          reject(error)
+        }
+        resolve(stdout || stderr)
+      })
+    })
+  }
+
+  /**
+   * Given a version-y string, do slight cleanup and set the
+   * executable&apos;s rawVersion. Typically comes from stdout/stderr.
+   * @param {string} version the version string, fresh from terminal output
+   */
+  setRawVersion (version) {
+    /**
+     * The raw output from stdout/stderr of --version
+     * @type {string}
+    */
+    this.rawVersion = version.trim()
+  }
+
+  /**
+   * Clean up the rawVersion, pulling out the actual version number
+   * @todo should probably rename this
+   */
+  cleanVersion () {
+    /**
+     * The version number of the program, typically cleaned up in
+     * a subclass
+     * @type {string}
+    */
+    this.version = this.rawVersion
+  }
+
+  /**
+   * Query for and set the rawVersion and version
+   * @return {Promise}
+   */
+  setVersion () {
+    return this.requestVersion()
+      .then(version =&gt; { this.setRawVersion(version) })
+      .then(() =&gt; { this.cleanVersion() })
+      .catch(error =&gt; {
+        this.addError(error)
+        return this
+      })
+  }
+
+  /**
+   * Query for the executable file&apos;s creation/modification/access time
+   * and save it to the object
+   * @return {Promise}
+   */
+  setStats () {
+    return new Promise((resolve, reject) =&gt; {
+      stat(this.path, (error, stats) =&gt; {
+        // TODO
+        if (error) {
+          reject(error)
+        } else {
+          this.atime = stats.atime
+          this.ctime = stats.ctime
+          this.mtime = stats.mtime
+        }
+        resolve(this)
+      })
+    })
+  }
+
+  /**
+   * When you&apos;re looking for a path, but don&apos;t necessarily care
+   * if it&apos;s the symlinked one or the non-symlinked on?
+   * @todo it says &apos;FIXME&apos; but I think it should just be &apos;get rid of me&apos;
+   * @type {string}
+   * @return {string} the best known path for the executable
+   */
+  get path () {
+    try {
+      return this.realpath
+    } catch (e) {
+      return this.paths[0]
+    }
+  }
+
+  /**
+   * The path of the executable, or the target of a symlinked executable
+   * @return {string} The executable file&apos;s path
+   */
+  get realpath () {
+    if (!this._realpath) {
+      try {
+        this._realpath = realpathSync(this.paths[0])
+      } catch (err) {
+        this._realpath = this.paths[0]
+        this.addError(err)
+      }
+    }
+    return this._realpath
+  }
+
+  /**
+   * Set the realpath
+   * @param {string} the new true path
+   */
+  set realpath (path) {
+    this._realpath = path
+  }
+
+  /**
+   * Fills in all of the details of the executable
+   * @return {Promise}
+   */
+  populate () {
+    return Promise.all([
+      this.setVersion(),
+      this.setStats()
+    ])
+    .then(() =&gt; this.setExtras())
+    .then(() =&gt; this)
+    .catch((error) =&gt; {
+      this.addError(error)
+      return this
+    })
+  }
+
+  /**
+   * Subclasses that need extra details (lists of packages, etc) 
+   * override this method
+   * @abstract
+   * @return {Promise}
+   */
+  setExtras () {
+    return Promise.resolve(this)
+  }
+
+  /**
+   * Adds a known path to this executable (e.g. a symlink)
+   */
+  addPath (path) {
+    if (path &amp;&amp; this.paths.indexOf(path) === -1) {
+      this.paths.push(path)
+    }
+  }
+
+  /**
+   * Converts the executable&apos;s data to a JSON-friendly object
+   * it&apos;s mostly so we can rename _realpath to realpath
+   */
+  toJSON () {
+    return Object.keys(this).reduce((obj, key) =&gt; {
+      if (key === &apos;_realpath&apos;) {
+        obj[&apos;realpath&apos;] = this.realpath
+      } else {
+        obj[key] = this[key]
+      }
+      return obj
+    }, {})
+  }
+
+  /**
+   * Given a command name, creates an Executable from the executable
+   * file that would have been run had you typed the command in (e.g. which)
+   * @return {Promise&lt;Executable&gt;} the discovered executable
+   * @todo what if one is not found?
+   */
+  static findOne (command) {
+    return new Promise((resolve, reject) =&gt; {
+      let path = which(command).toString()
+      let executable = new (this)(path, command, true)
+      resolve(executable)
+    })
+  }
+
+  /**
+   * Given a command name or list of commands, returns an ExecutableCollection
+   * of all the executables with that name your computer might know about
+   * Looks in the path as well as looking in common paths.
+   * The Executables are all merged together, so you don&apos;t have different
+   * symlinks pointing at the same file.
+   * Each actual binary file yields one Executable
+   * @param {string|string[]} command the command or a list of commands
+   * @return {Promise&lt;ExecutableCollection&gt;} the discovered executables
+   */
+  static findAll (command) {
+    if (Array.isArray(command)) {
+      let promises = command.map(c =&gt; this.findAllWithoutMerge(c))
+      return Promise.all(promises)
+        .then(nested =&gt; ExecutableCollection.from([]).concat(...nested))
+        .then(executables =&gt; executables.merge())
+    } else {
+      return this.findAllWithoutMerge(command)
+        .then(executables =&gt; executables.merge())
+    }
+  }
+
+  /**
+   * Given a command name or list of commands, returns an ExecutableCollection
+   * of all the executables with that name your computer might know about
+   * Looks in the path as well as looking in common paths.
+   * The Executables are not merged
+   * Each path yields one Executable
+   * @param {string} command the command
+   * @return {Promise&lt;ExecutableCollection&gt;} the discovered executables
+   */
+  static findAllWithoutMerge (command) {
+    return Promise.all([
+      this.findByWhich(command),
+      this.findByPaths(command)
+    ]).then(exeArray =&gt; {
+      return new ExecutableCollection(...exeArray[0], ...exeArray[1])
+    })
+  }
+
+  /**
+   * Uses which to find all of the paths for a given command
+   * @param {string} command the command
+   * @return {Promise&lt;ExecutableCollection&gt;} the found executables
+   */
+  static findByWhich (command) {
+    return new Promise((resolve, reject) =&gt; {
+      let executables = which(&apos;-a&apos;, command).map((path, index) =&gt; {
+        // eslint-disable-next-line
+        return new (this)(path, command, index === 0)
+      })
+
+      executables = new ExecutableCollection(...executables)
+      resolve(executables)
+    })
+  }
+
+  /**
+   * Manually searches paths to find executables with a given name
+   * @param {string} command the command
+   * @return {Promise&lt;ExecutableCollection&gt;} the found executables
+   */
+  static findByPaths (command) {
+    let promises = this.searchPaths.map((path) =&gt; {
+      return new Promise((resolve, reject) =&gt; {
+        glob(join(path, command), (error, paths) =&gt; {
+          if (error) {
+            reject(error)
+          } else {
+            let executables = paths.map(path =&gt; new (this)(path))
+            executables = new ExecutableCollection(...executables)
+            resolve(executables)
+          }
+        })
+      })
+    })
+
+    return Promise.all(promises)
+      .then(nested =&gt; ExecutableCollection.from([]).concat(...nested))
+  }
+
+  /**
+   * Paths to manually search in for executables
+   */
+  static get searchPaths () {
+    return [
+      &apos;/usr/local/Cellar/python*/*/bin&apos;,
+      join(homedir(), &apos;anaconda*/bin/python*&apos;),
+      &apos;/usr/local/bin&apos;,
+      &apos;/usr/bin/&apos;
+    ]
+  }
+
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/executables/pip.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/jsoma/mcpyver" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-clear">clear</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-exec">exec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getConda">getConda</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getJupyter">getJupyter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getJupyterList">getJupyterList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getPipList">getPipList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getPythonList">getPythonList</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getVirtualEnv">getVirtualEnv</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">environments</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/environments/condaenv.js~CondaEnv.html">CondaEnv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/environments/environment.js~Environment.html">Environment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/environments/virtualenv.js~VirtualEnv.html">VirtualEnv</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">executables</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/conda.js~CondaExecutable.html">CondaExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/executable.js~Executable.html">Executable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/executable_collection.js~ExecutableCollection.html">ExecutableCollection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/jupyter.js~JupyterExecutable.html">JupyterExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/pip.js~PipExecutable.html">PipExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/python.js~PythonExecutable.html">PythonExecutable</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/executables/virtualenv.js~VirtualEnvExecutable.html">VirtualEnvExecutable</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/executables/pip.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { exec } from &apos;../executive&apos;
+import { ls } from &apos;shelljs&apos;
+import { access, constants } from &apos;fs&apos;
+import Executable from &apos;./executable&apos;
+
+export default class PipExecutable extends Executable {
+
+  setExtras () {
+    return Promise.all([
+      this.getPackages(),
+      this.getPackageDirectory()
+    ])
+  }
+
+  cleanVersion () {
+    try {
+      this.version = this.rawVersion.trim().match(/pip ([\d.]+)/i)[1]
+      this.pythonVersion = this.rawVersion.trim().match(/python ([\d.]+)/i)[1]
+    } catch (err) {
+      // this means the python is broken
+    }
+  }
+
+  getPackageDirectory () {
+    this.packageDir = this.rawVersion.trim().match(/pip [\d.]+ from (.*) \(python/)[1]
+    this.packageDirDetails = ls(&apos;-dl&apos;, this.packageDir)[0]
+    return new Promise((resolve, reject) =&gt; {
+      access(this.packageDir, constants.R_OK | constants.W_OK, (err) =&gt; {
+        this.access = !err
+        resolve(this)
+      })
+    })
+  }
+
+  get mergeField () {
+    return this.packageDir ? this.packageDir : this.realpath
+  }
+
+  getPackageListing () {
+    return new Promise((resolve, reject) =&gt; {
+      let listCommand = `${this.path} list`
+
+      exec(listCommand, (error, stdout, stderr) =&gt; {
+        if (error) {
+          reject(error)
+        }
+        resolve(stdout)
+      })
+    })
+  }
+
+  getPackages (legacy = true) {
+    return this.getPackageListing()
+      .then((listing) =&gt; {
+        this.packages = PipExecutable.parsePackageList(listing)
+        return this
+      })
+  }
+
+  static parsePackageList (list) {
+    if (!list) {
+      return []
+    }
+    // This replace gets rid of the headers
+    let lines = list.replace(/[\s\S]*-{5,}/gm, &apos;&apos;).trim().split(&apos;\n&apos;)
+
+    // Convert them to objects, remove any blanks
+    return lines.map(PipExecutable.parsePackageLine).filter(p =&gt; p)
+  }
+
+  static parsePackageLine (line) {
+    if (line.indexOf(&apos;(&apos;) !== -1) {
+      return PipExecutable.parseLegacyPackageLine(line)
+    } else {
+      return PipExecutable.parseColumnPackageLine(line)
+    }
+  }
+
+  static parseLegacyPackageLine (line) {
+    let cleaned = line.trim()
+    let matches = cleaned.match(/(.*) \((\d.+)\)/)
+    if (!matches) {
+      return
+    }
+    return { raw: cleaned, name: matches[1], version: matches[2] }
+  }
+
+  static parseColumnPackageLine (line) {
+    let cleaned = line.trim().replace(/\s+/, &apos; &apos;)
+    let matches = cleaned.match(/(.*)\s+(\d.+)/)
+    if (!matches) {
+      return
+    }
+    return { raw: cleaned, name: matches[1], version: matches[2] }
+  }
+
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
