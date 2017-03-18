@@ -1,6 +1,6 @@
 # mcpyver
 
-![Travis](https://travis-ci.org/jsoma/mcpyver.svg?branch=master)
+[![Travis](https://travis-ci.org/jsoma/mcpyver.svg?branch=master)](https://travis-ci.org/jsoma/mcpyver) [![Coverage Status](https://coveralls.io/repos/github/jsoma/mcpyver/badge.svg?branch=master)](https://coveralls.io/github/jsoma/mcpyver?branch=master)
 
 A node library for detecting all of the Python installations on your machine (and pips, virtual environments, and more!). It will rescue you when your Python is throwing errors and spitting fire.
 
