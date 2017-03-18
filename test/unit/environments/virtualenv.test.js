@@ -19,19 +19,19 @@ describe('VirtualEnv', () => {
       sandbox.restore()
   })
 
-  describe('#pythonPath', () => {
-    it('populates the python path', () => {
+  describe('#commandPath', () => {
+    it('gets the python path', () => {
       let venv = new VirtualEnv('default')
       let pythonPath = join(homedir(), '.virtualenvs', 'default', 'bin', 'python')
-      venv.pythonPath.should.equal(pythonPath)
+      venv.getCommandPath('python')
+        .then((path) => path.should.equal(pythonPath))
     })
-  })
 
-  describe('#pipPath', () => {
     it('gets the pip path', () => {
       let venv = new VirtualEnv('default')
       let pipPath = join(homedir(), '.virtualenvs', 'default', 'bin', 'pip')
-      venv.pipPath.should.equal(pipPath)
+      venv.getCommandPath('pip')
+        .then((path) => path.should.equal(pipPath))
     })
   })
 

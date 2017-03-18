@@ -19,6 +19,28 @@ export default class Environment {
       })
   }
 
+  setPipData () {
+    return this.getCommandPath('pip')
+      .then(path => new PipExecutable(path).populate())
+      .then(pip => {
+        this.pip = pip
+        return this
+      })
+  }
+
+  setPythonData () {
+    return this.getCommandPath('python')
+      .then(path => new PythonExecutable(path).populate())
+      .then(python => {
+        this.python = python
+        return this
+      })
+  }
+
+  getCommandPath (command) {
+    return Promise.resolve(this)
+  }
+
   getEnvData () {
     return Promise.resolve({})
   }

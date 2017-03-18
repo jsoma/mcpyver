@@ -14,28 +14,10 @@ export default class VirtualEnv extends Environment {
     this.basepath = join(WORKON_HOME, this.name)
   }
 
-  get pythonPath () {
-    return join(this.basepath, '/bin/python')
-  }
-
-  get pipPath () {
-    return join(this.basepath, '/bin/pip')
-  }
-
-  setPipData () {
-    return new PipExecutable(this.pipPath).populate()
-      .then(results => {
-        this.pip = results
-        return this
-      })
-  }
-
-  setPythonData () {
-    return new PythonExecutable(this.pythonPath).populate()
-      .then(results => {
-        this.python = results
-        return this
-      })
+  getCommandPath (command) {
+    return new Promise((resolve, reject) => {
+      resolve(join(this.basepath, `/bin/${command}`))
+    })
   }
 
   setEnvData () {

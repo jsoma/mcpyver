@@ -23,24 +23,6 @@ export default class CondaEnv extends Environment {
     })
   }
 
-  setPipData () {
-    return this.getCommandPath('pip')
-      .then(path => new PipExecutable(path).populate())
-      .then(results => {
-        this.pip = results
-        return this
-      })
-  }
-
-  setPythonData () {
-    return this.getCommandPath('python')
-      .then(path => new PythonExecutable(path).populate())
-      .then(results => {
-        this.python = results
-        return this
-      })
-  }
-
   getPackages () {
     return new Promise((resolve, reject) => {
       exec(`conda list --prefix ${this.basepath} --json`, (error, stdout, stderr) => {
