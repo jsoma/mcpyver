@@ -79,7 +79,7 @@ module.exports =
 var os = __webpack_require__(5);
 var fs = __webpack_require__(1);
 var glob = __webpack_require__(6);
-var shell = __webpack_require__(11);
+var shell = __webpack_require__(10);
 
 var shellMethods = Object.create(shell);
 
@@ -594,7 +594,7 @@ var _executive = __webpack_require__(3);
 
 var _fs = __webpack_require__(1);
 
-var _shelljs = __webpack_require__(11);
+var _shelljs = __webpack_require__(10);
 
 var _executable_collection = __webpack_require__(54);
 
@@ -925,13 +925,13 @@ module.exports = glob
 
 var fs = __webpack_require__(1)
 var rp = __webpack_require__(21)
-var minimatch = __webpack_require__(9)
+var minimatch = __webpack_require__(8)
 var Minimatch = minimatch.Minimatch
 var inherits = __webpack_require__(65)
 var EE = __webpack_require__(69).EventEmitter
 var path = __webpack_require__(2)
 var assert = __webpack_require__(48)
-var isAbsolute = __webpack_require__(10)
+var isAbsolute = __webpack_require__(9)
 var globSync = __webpack_require__(63)
 var common = __webpack_require__(22)
 var alphasort = common.alphasort
@@ -939,7 +939,7 @@ var alphasorti = common.alphasorti
 var setopts = common.setopts
 var ownProp = common.ownProp
 var inflight = __webpack_require__(64)
-var util = __webpack_require__(19)
+var util = __webpack_require__(18)
 var childrenIgnored = common.childrenIgnored
 var isIgnored = common.isIgnored
 
@@ -1681,6 +1681,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _executive = __webpack_require__(3);
 
+var _executables = __webpack_require__(20);
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Environment = function () {
@@ -1713,7 +1715,7 @@ var Environment = function () {
       var _this2 = this;
 
       return this.getCommandPath('pip').then(function (path) {
-        return new PipExecutable(path).populate();
+        return new _executables.PipExecutable(path).populate();
       }).then(function (pip) {
         _this2.pip = pip;
         return _this2;
@@ -1725,7 +1727,7 @@ var Environment = function () {
       var _this3 = this;
 
       return this.getCommandPath('python').then(function (path) {
-        return new PythonExecutable(path).populate();
+        return new _executables.PythonExecutable(path).populate();
       }).then(function (python) {
         _this3.python = python;
         return _this3;
@@ -1778,51 +1780,6 @@ exports.default = Environment;
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.VirtualEnvExecutable = exports.CondaExecutable = exports.JupyterExecutable = exports.PythonExecutable = exports.PipExecutable = exports.Executable = undefined;
-
-var _executable = __webpack_require__(4);
-
-var _executable2 = _interopRequireDefault(_executable);
-
-var _pip = __webpack_require__(56);
-
-var _pip2 = _interopRequireDefault(_pip);
-
-var _python = __webpack_require__(57);
-
-var _python2 = _interopRequireDefault(_python);
-
-var _jupyter = __webpack_require__(55);
-
-var _jupyter2 = _interopRequireDefault(_jupyter);
-
-var _conda = __webpack_require__(53);
-
-var _conda2 = _interopRequireDefault(_conda);
-
-var _virtualenv = __webpack_require__(58);
-
-var _virtualenv2 = _interopRequireDefault(_virtualenv);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.Executable = _executable2.default;
-exports.PipExecutable = _pip2.default;
-exports.PythonExecutable = _python2.default;
-exports.JupyterExecutable = _jupyter2.default;
-exports.CondaExecutable = _conda2.default;
-exports.VirtualEnvExecutable = _virtualenv2.default;
-
-/***/ }),
-/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = minimatch
@@ -2751,7 +2708,7 @@ function regExpEscape (s) {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2778,7 +2735,7 @@ module.exports.win32 = win32;
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -2814,7 +2771,7 @@ __webpack_require__(67).forEach(function (command) {
 exports.exit = process.exit;
 
 //@include ./src/error
-exports.error = __webpack_require__(14);
+exports.error = __webpack_require__(13);
 
 //@include ./src/common
 exports.ShellString = common.ShellString;
@@ -2936,7 +2893,7 @@ exports.config = common.config;
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var fs = __webpack_require__(1);
@@ -2980,7 +2937,7 @@ module.exports = _cd;
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var fs = __webpack_require__(1);
@@ -3264,7 +3221,7 @@ module.exports = _cp;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var common = __webpack_require__(0);
@@ -3284,7 +3241,7 @@ module.exports = error;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var path = __webpack_require__(2);
@@ -3416,7 +3373,7 @@ module.exports = _ls;
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var path = __webpack_require__(2);
@@ -3437,7 +3394,7 @@ module.exports = _pwd;
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var common = __webpack_require__(0);
@@ -3593,7 +3550,7 @@ module.exports = _rm;
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var common = __webpack_require__(0);
@@ -3659,13 +3616,13 @@ module.exports = _tempDir;
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("util");
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3693,6 +3650,51 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.Environment = _environment2.default;
 exports.CondaEnv = _condaenv2.default;
 exports.VirtualEnv = _virtualenv2.default;
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.VirtualEnvExecutable = exports.CondaExecutable = exports.JupyterExecutable = exports.PythonExecutable = exports.PipExecutable = exports.Executable = undefined;
+
+var _executable = __webpack_require__(4);
+
+var _executable2 = _interopRequireDefault(_executable);
+
+var _pip = __webpack_require__(56);
+
+var _pip2 = _interopRequireDefault(_pip);
+
+var _python = __webpack_require__(57);
+
+var _python2 = _interopRequireDefault(_python);
+
+var _jupyter = __webpack_require__(55);
+
+var _jupyter2 = _interopRequireDefault(_jupyter);
+
+var _conda = __webpack_require__(53);
+
+var _conda2 = _interopRequireDefault(_conda);
+
+var _virtualenv = __webpack_require__(58);
+
+var _virtualenv2 = _interopRequireDefault(_virtualenv);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.Executable = _executable2.default;
+exports.PipExecutable = _pip2.default;
+exports.PythonExecutable = _python2.default;
+exports.JupyterExecutable = _jupyter2.default;
+exports.CondaExecutable = _conda2.default;
+exports.VirtualEnvExecutable = _virtualenv2.default;
 
 /***/ }),
 /* 21 */
@@ -3785,8 +3787,8 @@ function ownProp (obj, field) {
 }
 
 var path = __webpack_require__(2)
-var minimatch = __webpack_require__(9)
-var isAbsolute = __webpack_require__(10)
+var minimatch = __webpack_require__(8)
+var isAbsolute = __webpack_require__(9)
 var Minimatch = minimatch.Minimatch
 
 function alphasorti (a, b) {
@@ -4328,7 +4330,7 @@ module.exports = _chmod;
 /***/ (function(module, exports, __webpack_require__) {
 
 var common = __webpack_require__(0);
-var _cd = __webpack_require__(12);
+var _cd = __webpack_require__(11);
 var path = __webpack_require__(2);
 
 common.register('dirs', _dirs, {
@@ -4574,8 +4576,8 @@ module.exports = _echo;
 /***/ (function(module, exports, __webpack_require__) {
 
 var common = __webpack_require__(0);
-var _tempDir = __webpack_require__(18);
-var _pwd = __webpack_require__(16);
+var _tempDir = __webpack_require__(17);
+var _pwd = __webpack_require__(15);
 var path = __webpack_require__(2);
 var fs = __webpack_require__(1);
 var child = __webpack_require__(49);
@@ -4877,7 +4879,7 @@ module.exports = _exec;
 var fs = __webpack_require__(1);
 var path = __webpack_require__(2);
 var common = __webpack_require__(0);
-var _ls = __webpack_require__(15);
+var _ls = __webpack_require__(14);
 
 common.register('find', _find, {});
 
@@ -5304,8 +5306,8 @@ module.exports = _mkdir;
 var fs = __webpack_require__(1);
 var path = __webpack_require__(2);
 var common = __webpack_require__(0);
-var cp = __webpack_require__(13);
-var rm = __webpack_require__(17);
+var cp = __webpack_require__(12);
+var rm = __webpack_require__(16);
 
 common.register('mv', _mv, {
   cmdOptions: {
@@ -6288,7 +6290,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getPythonList = exports.getPipList = exports.getJupyterList = exports.getJupyter = exports.getVirtualEnv = exports.getConda = undefined;
 
-var _executables = __webpack_require__(8);
+var _executables = __webpack_require__(20);
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -6361,8 +6363,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _executive = __webpack_require__(3);
 
 var _path = __webpack_require__(2);
-
-var _executables = __webpack_require__(8);
 
 var _environment = __webpack_require__(7);
 
@@ -6484,8 +6484,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _executive = __webpack_require__(3);
 
-var _executables = __webpack_require__(8);
-
 var _environment = __webpack_require__(7);
 
 var _environment2 = _interopRequireDefault(_environment);
@@ -6594,7 +6592,7 @@ var _executable = __webpack_require__(4);
 
 var _executable2 = _interopRequireDefault(_executable);
 
-var _environments = __webpack_require__(20);
+var _environments = __webpack_require__(19);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6924,7 +6922,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _executive = __webpack_require__(3);
 
-var _shelljs = __webpack_require__(11);
+var _shelljs = __webpack_require__(10);
 
 var _fs = __webpack_require__(1);
 
@@ -7202,7 +7200,7 @@ var _executable = __webpack_require__(4);
 
 var _executable2 = _interopRequireDefault(_executable);
 
-var _environments = __webpack_require__(20);
+var _environments = __webpack_require__(19);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7865,13 +7863,13 @@ globSync.GlobSync = GlobSync
 
 var fs = __webpack_require__(1)
 var rp = __webpack_require__(21)
-var minimatch = __webpack_require__(9)
+var minimatch = __webpack_require__(8)
 var Minimatch = minimatch.Minimatch
 var Glob = __webpack_require__(6).Glob
-var util = __webpack_require__(19)
+var util = __webpack_require__(18)
 var path = __webpack_require__(2)
 var assert = __webpack_require__(48)
-var isAbsolute = __webpack_require__(10)
+var isAbsolute = __webpack_require__(9)
 var common = __webpack_require__(22)
 var alphasort = common.alphasort
 var alphasorti = common.alphasorti
@@ -8395,7 +8393,7 @@ function slice (args) {
 /***/ (function(module, exports, __webpack_require__) {
 
 try {
-  var util = __webpack_require__(19);
+  var util = __webpack_require__(18);
   if (typeof util.inherits !== 'function') throw '';
   module.exports = util.inherits;
 } catch (e) {
@@ -8474,20 +8472,20 @@ module.exports = [
 var map = {
 	"./cat": 24,
 	"./cat.js": 24,
-	"./cd": 12,
-	"./cd.js": 12,
+	"./cd": 11,
+	"./cd.js": 11,
 	"./chmod": 25,
 	"./chmod.js": 25,
 	"./common": 0,
 	"./common.js": 0,
-	"./cp": 13,
-	"./cp.js": 13,
+	"./cp": 12,
+	"./cp.js": 12,
 	"./dirs": 26,
 	"./dirs.js": 26,
 	"./echo": 27,
 	"./echo.js": 27,
-	"./error": 14,
-	"./error.js": 14,
+	"./error": 13,
+	"./error.js": 13,
 	"./exec": 28,
 	"./exec.js": 28,
 	"./find": 29,
@@ -8498,8 +8496,8 @@ var map = {
 	"./head.js": 31,
 	"./ln": 32,
 	"./ln.js": 32,
-	"./ls": 15,
-	"./ls.js": 15,
+	"./ls": 14,
+	"./ls.js": 14,
 	"./mkdir": 33,
 	"./mkdir.js": 33,
 	"./mv": 34,
@@ -8508,10 +8506,10 @@ var map = {
 	"./popd.js": 35,
 	"./pushd": 36,
 	"./pushd.js": 36,
-	"./pwd": 16,
-	"./pwd.js": 16,
-	"./rm": 17,
-	"./rm.js": 17,
+	"./pwd": 15,
+	"./pwd.js": 15,
+	"./rm": 16,
+	"./rm.js": 16,
 	"./sed": 37,
 	"./sed.js": 37,
 	"./set": 38,
@@ -8520,8 +8518,8 @@ var map = {
 	"./sort.js": 39,
 	"./tail": 40,
 	"./tail.js": 40,
-	"./tempdir": 18,
-	"./tempdir.js": 18,
+	"./tempdir": 17,
+	"./tempdir.js": 17,
 	"./test": 41,
 	"./test.js": 41,
 	"./to": 42,
