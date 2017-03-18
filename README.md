@@ -1,5 +1,7 @@
 # mcpyver
 
+![Travis](https://travis-ci.org/jsoma/mcpyver.svg?branch=master)
+
 A node library for detecting all of the Python installations on your machine (and pips, virtual environments, and more!). It will rescue you when your Python is throwing errors and spitting fire.
 
 **Note:** I didn't call it `macpyver` because then you'd think it only works on macs. But that isn't true! It totally works on Windows, too!
