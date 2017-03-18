@@ -4,12 +4,12 @@
   "description": "Easily detect all of the Python versions on your machine",
   "main": "dist/bundle.js",
   "scripts": {
-    "test": "mocha --reporter spec --recursive --compilers js:babel-core/register",
-    "nyc": "./node_modules/.bin/nyc npm test",
+    "test": "_mocha --reporter spec --recursive --compilers js:babel-core/register",
+    "nyc": "./node_modules/.bin/nyc _mocha --reporter spec --recursive --compilers js:babel-core/register",
     "lint": "./node_modules/.bin/eslint --ext .js -f ./node_modules/eslint-friendly-formatter src",
     "build": "webpack --config webpack.config.js",
     "doc": "./node_modules/.bin/esdoc -c esdoc.json",
-    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov > coverage.lcov && ./node_modules/.bin/codecov"
+    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
   },
   "repository": {
     "type": "git",
