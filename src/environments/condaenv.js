@@ -1,5 +1,5 @@
 import { exec } from '../executive'
-import { basename, join } from 'path'
+import { basename } from 'path'
 import Environment from './environment'
 
 export default class CondaEnv extends Environment {

@@ -6395,8 +6395,7 @@ var CondaEnv = function (_Environment) {
       var _this2 = this;
 
       return new Promise(function (resolve, reject) {
-        var activatePath = (0, _path.join)(_this2.basepath, 'bin', 'activate');
-        (0, _executive.exec)('source ' + activatePath + ' && which ' + command, function (error, stdout, stderr) {
+        (0, _executive.exec)('source activate ' + _this2.basepath + ' && which ' + command, function (error, stdout, stderr) {
           if (error) {
             reject(error);
           }
