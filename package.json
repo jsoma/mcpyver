@@ -15,7 +15,6 @@
     "type": "git",
     "url": "git+https://github.com/jsoma/mcpyver.git"
   },
-  "private": true,
   "keywords": [
     "python",
     "versions",
