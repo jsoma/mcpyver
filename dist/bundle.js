@@ -1708,6 +1708,35 @@ var Environment = function () {
       });
     }
   }, {
+    key: 'setPipData',
+    value: function setPipData() {
+      var _this2 = this;
+
+      return this.getCommandPath('pip').then(function (path) {
+        return new PipExecutable(path).populate();
+      }).then(function (pip) {
+        _this2.pip = pip;
+        return _this2;
+      });
+    }
+  }, {
+    key: 'setPythonData',
+    value: function setPythonData() {
+      var _this3 = this;
+
+      return this.getCommandPath('python').then(function (path) {
+        return new PythonExecutable(path).populate();
+      }).then(function (python) {
+        _this3.python = python;
+        return _this3;
+      });
+    }
+  }, {
+    key: 'getCommandPath',
+    value: function getCommandPath(command) {
+      return Promise.resolve(this);
+    }
+  }, {
     key: 'getEnvData',
     value: function getEnvData() {
       return Promise.resolve({});
@@ -1729,10 +1758,10 @@ var Environment = function () {
   }, {
     key: 'isInstalled',
     value: function isInstalled() {
-      var _this2 = this;
+      var _this4 = this;
 
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)(_this2.command + ' --version', function (error, stdout, stderr) {
+        (0, _executive.exec)(_this4.command + ' --version', function (error, stdout, stderr) {
           if (error) {
             reject(error);
           }
@@ -6376,36 +6405,12 @@ var CondaEnv = function (_Environment) {
       });
     }
   }, {
-    key: 'setPipData',
-    value: function setPipData() {
-      var _this3 = this;
-
-      return this.getCommandPath('pip').then(function (path) {
-        return new _executables.PipExecutable(path).populate();
-      }).then(function (results) {
-        _this3.pip = results;
-        return _this3;
-      });
-    }
-  }, {
-    key: 'setPythonData',
-    value: function setPythonData() {
-      var _this4 = this;
-
-      return this.getCommandPath('python').then(function (path) {
-        return new _executables.PythonExecutable(path).populate();
-      }).then(function (results) {
-        _this4.python = results;
-        return _this4;
-      });
-    }
-  }, {
     key: 'getPackages',
     value: function getPackages() {
-      var _this5 = this;
+      var _this3 = this;
 
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)('conda list --prefix ' + _this5.basepath + ' --json', function (error, stdout, stderr) {
+        (0, _executive.exec)('conda list --prefix ' + _this3.basepath + ' --json', function (error, stdout, stderr) {
           if (error) {
             return reject(error);
           }
@@ -6416,18 +6421,18 @@ var CondaEnv = function (_Environment) {
   }, {
     key: 'setEnvData',
     value: function setEnvData() {
-      var _this6 = this;
+      var _this4 = this;
 
       return this.setPipData().then(function () {
-        return _this6.setPythonData();
+        return _this4.setPythonData();
       }).then(function () {
-        return _this6.getPackages();
+        return _this4.getPackages();
       }).then(function (data) {
-        _this6.packages = data;
-        return _this6;
+        _this4.packages = data;
+        return _this4;
       }).catch(function (error) {
-        _this6.addError(error);
-        return _this6;
+        _this4.addError(error);
+        return _this4;
       });
     }
   }], [{
@@ -6513,39 +6518,18 @@ var VirtualEnv = function (_Environment) {
   }
 
   _createClass(VirtualEnv, [{
-    key: 'setPipData',
-    value: function setPipData() {
+    key: 'getCommandPath',
+    value: function getCommandPath(command) {
       var _this2 = this;
 
-      return new _executables.PipExecutable(this.pipPath).populate().then(function (results) {
-        _this2.pip = results;
-        return _this2;
-      });
-    }
-  }, {
-    key: 'setPythonData',
-    value: function setPythonData() {
-      var _this3 = this;
-
-      return new _executables.PythonExecutable(this.pythonPath).populate().then(function (results) {
-        _this3.python = results;
-        return _this3;
+      return new Promise(function (resolve, reject) {
+        resolve((0, _path.join)(_this2.basepath, '/bin/' + command));
       });
     }
   }, {
     key: 'setEnvData',
     value: function setEnvData() {
       return Promise.all([this.setPipData(), this.setPythonData()]);
-    }
-  }, {
-    key: 'pythonPath',
-    get: function get() {
-      return (0, _path.join)(this.basepath, '/bin/python');
-    }
-  }, {
-    key: 'pipPath',
-    get: function get() {
-      return (0, _path.join)(this.basepath, '/bin/pip');
     }
   }], [{
     key: 'lsvirtualenv',
@@ -6567,7 +6551,7 @@ var VirtualEnv = function (_Environment) {
   }, {
     key: 'find',
     value: function find() {
-      var _this4 = this;
+      var _this3 = this;
 
       return this.lsvirtualenv().then(function (stdout) {
         var names = stdout.trim().split('\n');
@@ -6575,8 +6559,8 @@ var VirtualEnv = function (_Environment) {
           return new VirtualEnv(name);
         });
       }).catch(function (error) {
-        _this4.addError(error);
-        return _this4;
+        _this3.addError(error);
+        return _this3;
       });
     }
   }, {

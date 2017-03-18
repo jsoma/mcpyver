@@ -1,5 +1,4 @@
 import { exec } from '../executive'
-import { PipExecutable, PythonExecutable } from '../executables'
 import Environment from './environment'
 import { homedir, platform } from 'os'
 import { join } from 'path'

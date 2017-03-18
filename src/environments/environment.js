@@ -1,4 +1,5 @@
 import { exec } from '../executive'
+import { PipExecutable, PythonExecutable } from '../executables'
 
 export default class Environment {
 

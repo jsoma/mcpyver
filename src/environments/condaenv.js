@@ -1,6 +1,5 @@
 import { exec } from '../executive'
 import { basename, join } from 'path'
-import { PipExecutable, PythonExecutable } from '../executables'
 import Environment from './environment'
 
 export default class CondaEnv extends Environment {
