@@ -68,6 +68,12 @@ describe('Python', () => {
       python.installer.should.equal('Miniconda')
     })
 
+    it('detects Enthought Canopy (OS X)', () => {
+      python.realpath = '/Users/username/Library/Enthought/Canopy_64bit/User/bin/python'
+      python.detectInstaller()
+      python.installer.should.equal('Canopy')
+    })
+
     it('detects Homebrew (OS X)', () => {
       python.realpath = '/usr/local/Cellar/python/2.7.9/bin/python'
       python.detectInstaller()

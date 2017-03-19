@@ -44,6 +44,9 @@ export default class PythonExecutable extends Executable {
     }
 
     if (this.realpath) {
+      /* Custom Distributions */
+      if (this.realpath.indexOf('Enthought') !== -1) { this.installer = 'Canopy' }
+      if (this.realpath.indexOf('Canopy') !== -1) { this.installer = 'Canopy' }
       if (this.realpath.indexOf('anaconda') !== -1) { this.installer = 'Anaconda' }
       if (this.realpath.indexOf('miniconda') !== -1) { this.installer = 'Miniconda' }
 
