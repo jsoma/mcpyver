@@ -862,7 +862,7 @@ var Executable = function () {
   }, {
     key: 'searchPaths',
     get: function get() {
-      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*/bin/python*'), '/usr/local/bin', '/usr/bin/'];
+      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*/bin/python*'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*/bin/python*')];
     }
   }]);
 
@@ -7159,6 +7159,13 @@ var PythonExecutable = function (_Executable) {
       }
 
       if (this.realpath) {
+        if (this.realpath.indexOf('anaconda') !== -1) {
+          this.installer = 'Anaconda';
+        }
+        if (this.realpath.indexOf('miniconda') !== -1) {
+          this.installer = 'Miniconda';
+        }
+
         if (this.realpath.indexOf('Cellar') !== -1) {
           this.installer = 'Homebrew';
         }
