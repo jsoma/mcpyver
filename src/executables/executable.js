@@ -366,7 +366,8 @@ export default class Executable {
       '/usr/local/Cellar/python*/*/bin',
       join(homedir(), 'anaconda*/bin/python*'),
       '/usr/local/bin',
-      '/usr/bin/'
+      '/usr/bin/',
+      join(homedir(), 'miniconda*/bin/python*')
     ]
   }
 

@@ -55,20 +55,33 @@ describe('Python', () => {
       python.installer.should.equal('Anaconda')
     })
 
+    it('detects Anaconda 3 (Alternate, all platforms)', () => {
+      python.rawVersion = 'Python 3.6.0 :: Continuum Analytics, Inc.'
+      python.detectInstaller()
+      python.installer.should.equal('Anaconda')
+    })
+
+    it('detects Miniconda 3 (All platforms)', () => {
+      python.realpath = '/Users/jonathansoma/miniconda3/bin/python'
+      python.rawVersion = 'Python 3.6.0 :: Continuum Analytics, Inc.'
+      python.detectInstaller()
+      python.installer.should.equal('Miniconda')
+    })
+
     it('detects Homebrew (OS X)', () => {
-      python.realpath = '/usr/local/Cellar/python/2.7.9/bin/'
+      python.realpath = '/usr/local/Cellar/python/2.7.9/bin/python'
       python.detectInstaller()
       python.installer.should.equal('Homebrew')
     })
 
     it('detects default installation (OS X)', () => {
-      python.realpath = '/System/Library/Frameworks/Python.framework'
+      python.realpath = '/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
       python.detectInstaller()
       python.installer.should.equal('Default-OSX')
     })
 
     it('detects Python.org installer (OS X)', () => {
-      python.realpath = '/Library/Frameworks/Python.framework'
+      python.realpath = '/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
       python.detectInstaller()
       python.installer.should.equal('Python.org')
     })

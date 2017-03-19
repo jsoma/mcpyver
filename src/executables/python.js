@@ -38,11 +38,15 @@ export default class PythonExecutable extends Executable {
       this.installer = 'Anaconda'
     }
 
+    /* NB: The Miniconda one also says Continuum, but Anaconda is probably more popular */
     if (this.rawVersion && this.rawVersion.indexOf('Continuum') !== -1) {
       this.installer = 'Anaconda'
     }
 
     if (this.realpath) {
+      if (this.realpath.indexOf('anaconda') !== -1) { this.installer = 'Anaconda' }
+      if (this.realpath.indexOf('miniconda') !== -1) { this.installer = 'Miniconda' }
+
       /* OS X */
       if (this.realpath.indexOf('Cellar') !== -1) { this.installer = 'Homebrew' }
       if (this.realpath.indexOf('/System/Library/Frameworks/Python.framework') === 0) { this.installer = 'Default-OSX' }
