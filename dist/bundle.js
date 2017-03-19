@@ -6297,18 +6297,24 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function getVirtualEnv() {
   return _executables.VirtualEnvExecutable.findOne('virtualenv').then(function (v) {
     return v.populate();
+  }).catch(function (err) {
+    return null;
   });
 }
 
 function getConda() {
   return _executables.CondaExecutable.findOne('conda').then(function (c) {
     return c.populate();
+  }).catch(function (err) {
+    return null;
   });
 }
 
 function getJupyter() {
   return _executables.JupyterExecutable.findOne('jupyer').then(function (j) {
     return j.populate();
+  }).catch(function (err) {
+    return null;
   });
 }
 

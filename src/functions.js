@@ -3,19 +3,19 @@ import { CondaExecutable, PipExecutable, PythonExecutable, JupyterExecutable, Vi
 function getVirtualEnv () {
   return VirtualEnvExecutable.findOne('virtualenv')
     .then(v => v.populate())
-    .catch(err => null)
+    .catch(err => null) // eslint-disable-line
 }
 
 function getConda () {
   return CondaExecutable.findOne('conda')
     .then(c => c.populate())
-    .catch(err => null)
+    .catch(err => null) // eslint-disable-line
 }
 
 function getJupyter () {
   return JupyterExecutable.findOne('jupyer')
     .then(j => j.populate())
-    .catch(err => null)
+    .catch(err => null) // eslint-disable-line
 }
 
 function getJupyterList () {
