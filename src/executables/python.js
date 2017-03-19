@@ -33,6 +33,10 @@ export default class PythonExecutable extends Executable {
     })
   }
 
+  pathContains (str) {
+    return this.realpath.toLowerCase().indexOf(str.toLowerCase()) !== -1
+  }
+
   detectInstaller () {
     if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
       this.installer = 'Anaconda'
@@ -45,19 +49,20 @@ export default class PythonExecutable extends Executable {
 
     if (this.realpath) {
       /* Custom Distributions */
-      if (this.realpath.indexOf('Enthought') !== -1) { this.installer = 'Canopy' }
-      if (this.realpath.indexOf('Canopy') !== -1) { this.installer = 'Canopy' }
-      if (this.realpath.indexOf('anaconda') !== -1) { this.installer = 'Anaconda' }
-      if (this.realpath.indexOf('miniconda') !== -1) { this.installer = 'Miniconda' }
+      if (this.pathContains('Enthought')) { this.installer = 'Canopy' }
+      if (this.pathContains('Canopy')) { this.installer = 'Canopy' }
+      if (this.pathContains('anaconda')) { this.installer = 'Anaconda' }
+      if (this.pathContains('miniconda')) { this.installer = 'Miniconda' }
 
       /* OS X */
-      if (this.realpath.indexOf('Cellar') !== -1) { this.installer = 'Homebrew' }
-      if (this.realpath.indexOf('/System/Library/Frameworks/Python.framework') === 0) { this.installer = 'Default-OSX' }
-      if (this.realpath.indexOf('/Library/Frameworks/Python.framework') === 0) { this.installer = 'Python.org' }
+      if (this.pathContains('Cellar')) { this.installer = 'Homebrew' }
+      /* Note the order on these! */
+      if (this.pathContains('/Library/Frameworks/Python.framework')) { this.installer = 'Python.org' }
+      if (this.pathContains('/System/Library/Frameworks/Python.framework')) { this.installer = 'Default-OSX' }
 
       /* Windows */
-      if (this.realpath.toUpperCase().indexOf(':\\PYTHON27\\PYTHON') !== -1) { this.installer = 'Python.org' }
-      if (this.realpath.toUpperCase().indexOf('APPDATA\\LOCAL\\PROGRAMS\\PYTHON') !== -1) { this.installer = 'Python.org' }
+      if (this.pathContains(':\\PYTHON27\\PYTHON')) { this.installer = 'Python.org' }
+      if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) { this.installer = 'Python.org' }
     }
 
     if (this.installer) {

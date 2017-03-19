@@ -7148,6 +7148,11 @@ var PythonExecutable = function (_Executable) {
       });
     }
   }, {
+    key: 'pathContains',
+    value: function pathContains(str) {
+      return this.realpath.toLowerCase().indexOf(str.toLowerCase()) !== -1;
+    }
+  }, {
     key: 'detectInstaller',
     value: function detectInstaller() {
       if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
@@ -7159,27 +7164,34 @@ var PythonExecutable = function (_Executable) {
       }
 
       if (this.realpath) {
-        if (this.realpath.indexOf('anaconda') !== -1) {
+        if (this.pathContains('Enthought')) {
+          this.installer = 'Canopy';
+        }
+        if (this.pathContains('Canopy')) {
+          this.installer = 'Canopy';
+        }
+        if (this.pathContains('anaconda')) {
           this.installer = 'Anaconda';
         }
-        if (this.realpath.indexOf('miniconda') !== -1) {
+        if (this.pathContains('miniconda')) {
           this.installer = 'Miniconda';
         }
 
-        if (this.realpath.indexOf('Cellar') !== -1) {
+        if (this.pathContains('Cellar')) {
           this.installer = 'Homebrew';
         }
-        if (this.realpath.indexOf('/System/Library/Frameworks/Python.framework') === 0) {
+
+        if (this.pathContains('/Library/Frameworks/Python.framework')) {
+          this.installer = 'Python.org';
+        }
+        if (this.pathContains('/System/Library/Frameworks/Python.framework')) {
           this.installer = 'Default-OSX';
         }
-        if (this.realpath.indexOf('/Library/Frameworks/Python.framework') === 0) {
-          this.installer = 'Python.org';
-        }
 
-        if (this.realpath.toUpperCase().indexOf(':\\PYTHON27\\PYTHON') !== -1) {
+        if (this.pathContains(':\\PYTHON27\\PYTHON')) {
           this.installer = 'Python.org';
         }
-        if (this.realpath.toUpperCase().indexOf('APPDATA\\LOCAL\\PROGRAMS\\PYTHON') !== -1) {
+        if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
           this.installer = 'Python.org';
         }
       }
