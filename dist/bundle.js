@@ -6896,10 +6896,15 @@ var JupyterExecutable = function (_Executable) {
             reject(error);
           }
 
-          var kernelspecs = JSON.parse(stdout).kernelspecs;
-          _this3.kernels = Object.keys(kernelspecs).map(function (key) {
-            return kernelspecs[key];
-          });
+          try {
+            var kernelspecs = JSON.parse(stdout).kernelspecs;
+            _this3.kernels = Object.keys(kernelspecs).map(function (key) {
+              return kernelspecs[key];
+            });
+          } catch (err) {
+            _this3.addError(err);
+            _this3.kernels = [];
+          }
 
           resolve(_this3.setKernelRealpaths());
         });

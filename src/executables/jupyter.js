@@ -34,10 +34,16 @@ export default class JupyterExecutable extends Executable {
           reject(error)
         }
 
-        let kernelspecs = JSON.parse(stdout).kernelspecs
-        this.kernels = Object.keys(kernelspecs).map(function (key) {
-          return kernelspecs[key]
-        })
+        try {
+          /* Older Jupyer maybe doesn't support this? */
+          let kernelspecs = JSON.parse(stdout).kernelspecs
+          this.kernels = Object.keys(kernelspecs).map(function (key) {
+            return kernelspecs[key]
+          })
+        } catch (err) {
+          this.addError(err)
+          this.kernels = []
+        }
 
         resolve(this.setKernelRealpaths())
       })
