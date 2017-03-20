@@ -1,12 +1,16 @@
-import { exec as cpExec } from 'child_process'
+import { exec as cpExec, execSync as cpExecSync } from 'child_process'
 
 let CACHE = {}
 
-function clear () {
+export function clear () {
   CACHE = {}
 }
 
-function exec (command, callback, options = {}) {
+export function execSync (command) {
+  return cpExecSync(command)
+}
+
+export function exec (command, callback, options = {}) {
   /* Keep things in the cache for 5 seconds */
   if (command in CACHE && Date.now() - CACHE[command].timestamp < 5000) {
     callback(
@@ -25,9 +29,4 @@ function exec (command, callback, options = {}) {
       callback(error, stdout, stderr)
     })
   }
-}
-
-export {
-  clear,
-  exec
 }

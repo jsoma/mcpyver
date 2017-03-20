@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { exec, execSync } from '../executive'
 import Executable from './executable'
 
 export default class PythonExecutable extends Executable {
@@ -37,6 +37,16 @@ export default class PythonExecutable extends Executable {
     return this.realpath.toLowerCase().indexOf(str.toLowerCase()) !== -1
   }
 
+  isActivePython () {
+    let cmd = `${this.path} -c "import activestate"`
+    try {
+      execSync(cmd)
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
   detectInstaller () {
     if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
       this.installer = 'Anaconda'
@@ -64,6 +74,11 @@ export default class PythonExecutable extends Executable {
       /* Windows */
       if (this.pathContains(':\\PYTHON27\\PYTHON')) { this.installer = 'Python.org' }
       if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) { this.installer = 'Python.org' }
+
+      /* if nothing else, test for ActivePython/ActiveState since it isn't in --version */
+      if (!this.installer && this.isActivePython()) {
+        this.installer = 'ActivePython'
+      }
     }
 
     if (this.installer) {

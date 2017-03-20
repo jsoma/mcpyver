@@ -104,5 +104,15 @@ describe('Python', () => {
       python.installer.should.equal('Python.org')
     })
 
+    it('detects ActivePython (OS X)', () => {
+      sinon.stub(python, 'isActivePython', () => {
+        return true
+      })
+
+      python.realpath = '/usr/blah/blah/blah'
+      python.detectInstaller()
+      python.installer.should.equal('ActivePython')
+    })
+
   })
 })

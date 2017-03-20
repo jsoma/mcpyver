@@ -546,7 +546,9 @@ module.exports = require("path");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.exec = exports.clear = undefined;
+exports.clear = clear;
+exports.execSync = execSync;
+exports.exec = exec;
 
 var _child_process = __webpack_require__(49);
 
@@ -554,6 +556,10 @@ var CACHE = {};
 
 function clear() {
   CACHE = {};
+}
+
+function execSync(command) {
+  return (0, _child_process.execSync)(command);
 }
 
 function exec(command, callback) {
@@ -573,9 +579,6 @@ function exec(command, callback) {
     });
   }
 }
-
-exports.clear = clear;
-exports.exec = exec;
 
 /***/ }),
 /* 4 */
@@ -7158,6 +7161,17 @@ var PythonExecutable = function (_Executable) {
       return this.realpath.toLowerCase().indexOf(str.toLowerCase()) !== -1;
     }
   }, {
+    key: 'isActivePython',
+    value: function isActivePython() {
+      var cmd = this.path + ' -c "import activestate"';
+      try {
+        (0, _executive.execSync)(cmd);
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+  }, {
     key: 'detectInstaller',
     value: function detectInstaller() {
       if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
@@ -7191,6 +7205,10 @@ var PythonExecutable = function (_Executable) {
         }
         if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
           this.installer = 'Python.org';
+        }
+
+        if (!this.installer && this.isActivePython()) {
+          this.installer = 'ActivePython';
         }
       }
 
