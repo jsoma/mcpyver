@@ -7181,13 +7181,6 @@ var PythonExecutable = function (_Executable) {
           this.installer = 'Homebrew';
         }
 
-        if (this.pathContains('/Library/Frameworks/Python.framework')) {
-          this.installer = 'Python.org';
-        }
-        if (this.pathContains('/System/Library/Frameworks/Python.framework')) {
-          this.installer = 'Default-OSX';
-        }
-
         if (this.pathContains(':\\PYTHON27\\PYTHON')) {
           this.installer = 'Python.org';
         }

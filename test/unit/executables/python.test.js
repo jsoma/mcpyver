@@ -80,17 +80,17 @@ describe('Python', () => {
       python.installer.should.equal('Homebrew')
     })
 
-    it('detects default installation (OS X)', () => {
-      python.realpath = '/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
-      python.detectInstaller()
-      python.installer.should.equal('Default-OSX')
-    })
+    // it('detects default installation (OS X)', () => {
+    //   python.realpath = '/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
+    //   python.detectInstaller()
+    //   python.installer.should.equal('Default-OSX')
+    // })
 
-    it('detects Python.org installer (OS X)', () => {
-      python.realpath = '/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
-      python.detectInstaller()
-      python.installer.should.equal('Python.org')
-    })
+    // it('detects Python.org installer (OS X)', () => {
+    //   python.realpath = '/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
+    //   python.detectInstaller()
+    //   python.installer.should.equal('Python.org')
+    // })
 
     it('detects Python.org installer (Windows, Python 2)', () => {
       python.realpath = 'C:\\Python27\\Python.exe'

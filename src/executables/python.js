@@ -57,8 +57,9 @@ export default class PythonExecutable extends Executable {
       /* OS X */
       if (this.pathContains('Cellar')) { this.installer = 'Homebrew' }
       /* Note the order on these! */
-      if (this.pathContains('/Library/Frameworks/Python.framework')) { this.installer = 'Python.org' }
-      if (this.pathContains('/System/Library/Frameworks/Python.framework')) { this.installer = 'Default-OSX' }
+      /* Honestly though I guess we don't know, anything can install here */
+      // if (this.pathContains('/Library/Frameworks/Python.framework')) { this.installer = 'Python.org' }
+      // if (this.pathContains('/System/Library/Frameworks/Python.framework')) { this.installer = 'Default-OSX' }
 
       /* Windows */
       if (this.pathContains(':\\PYTHON27\\PYTHON')) { this.installer = 'Python.org' }
