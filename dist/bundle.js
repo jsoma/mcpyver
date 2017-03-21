@@ -865,7 +865,7 @@ var Executable = function () {
   }, {
     key: 'searchPaths',
     get: function get() {
-      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*/bin/python*'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*/bin/python*')];
+      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*/bin'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*/bin'), '/Library/Frameworks/Python.framework/Versions/*/bin/', '/System/Library/Frameworks/Python.framework/Versions/*/bin/'];
     }
   }]);
 

@@ -364,10 +364,12 @@ export default class Executable {
   static get searchPaths () {
     return [
       '/usr/local/Cellar/python*/*/bin',
-      join(homedir(), 'anaconda*/bin/python*'),
+      join(homedir(), 'anaconda*/bin'),
       '/usr/local/bin',
       '/usr/bin/',
-      join(homedir(), 'miniconda*/bin/python*')
+      join(homedir(), 'miniconda*/bin'),
+      '/Library/Frameworks/Python.framework/Versions/*/bin/',
+      '/System/Library/Frameworks/Python.framework/Versions/*/bin/'
     ]
   }
 
