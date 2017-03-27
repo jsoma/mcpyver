@@ -41,7 +41,7 @@ export default class PythonExecutable extends Executable {
     return new Promise((resolve, reject) => {
       let cmd = `${this.path} -c "import activestate"`
       exec(cmd, (error, stdout) => {
-        reslve(!error)
+        resolve(!error)
       })
     })
   }
@@ -79,12 +79,9 @@ export default class PythonExecutable extends Executable {
         if (!this.installer && this.isActivePython()) {
           this.isActivePython()
             .then(answer => {
-              if(answer) {
+              if (answer) {
                 this.installer = 'activepython'
               }
-              resolve(this)
-            })
-            .catch((err) => {
               resolve(this)
             })
         } else {

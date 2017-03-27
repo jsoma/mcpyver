@@ -7163,58 +7163,66 @@ var PythonExecutable = function (_Executable) {
   }, {
     key: 'isActivePython',
     value: function isActivePython() {
-      var cmd = this.path + ' -c "import activestate"';
-      try {
-        (0, _executive.execSync)(cmd);
-        return true;
-      } catch (err) {
-        return false;
-      }
+      var _this4 = this;
+
+      return new Promise(function (resolve, reject) {
+        var cmd = _this4.path + ' -c "import activestate"';
+        (0, _executive.exec)(cmd, function (error, stdout) {
+          resolve(!error);
+        });
+      });
     }
   }, {
     key: 'detectInstaller',
     value: function detectInstaller() {
-      if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
-        this.installer = 'Anaconda';
-      }
+      var _this5 = this;
 
-      if (this.rawVersion && this.rawVersion.indexOf('Continuum') !== -1) {
-        this.installer = 'Anaconda';
-      }
-
-      if (this.realpath) {
-        if (this.pathContains('Enthought')) {
-          this.installer = 'Canopy';
-        }
-        if (this.pathContains('Canopy')) {
-          this.installer = 'Canopy';
-        }
-        if (this.pathContains('anaconda')) {
-          this.installer = 'Anaconda';
-        }
-        if (this.pathContains('miniconda')) {
-          this.installer = 'Miniconda';
+      return new Promise(function (resolve, reject) {
+        if (_this5.rawVersion && _this5.rawVersion.indexOf('Anaconda') !== -1) {
+          _this5.installer = 'anaconda';
         }
 
-        if (this.pathContains('Cellar')) {
-          this.installer = 'Homebrew';
+        if (_this5.rawVersion && _this5.rawVersion.indexOf('Continuum') !== -1) {
+          _this5.installer = 'anaconda';
         }
 
-        if (this.pathContains(':\\PYTHON27\\PYTHON')) {
-          this.installer = 'Python.org';
-        }
-        if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
-          this.installer = 'Python.org';
-        }
+        if (_this5.realpath) {
+          if (_this5.pathContains('Enthought')) {
+            _this5.installer = 'canopy';
+          }
+          if (_this5.pathContains('Canopy')) {
+            _this5.installer = 'canopy';
+          }
+          if (_this5.pathContains('anaconda')) {
+            _this5.installer = 'anaconda';
+          }
+          if (_this5.pathContains('miniconda')) {
+            _this5.installer = 'miniconda';
+          }
 
-        if (!this.installer && this.isActivePython()) {
-          this.installer = 'ActivePython';
-        }
-      }
+          if (_this5.pathContains('Cellar')) {
+            _this5.installer = 'homebrew';
+          }
 
-      if (this.installer) {
-        this.installerSlug = this.installer.toLowerCase().replace(/[^A-Za-z]/, '');
-      }
+          if (_this5.pathContains(':\\PYTHON27\\PYTHON')) {
+            _this5.installer = 'pythonorg';
+          }
+          if (_this5.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
+            _this5.installer = 'pythonorg';
+          }
+
+          if (!_this5.installer && _this5.isActivePython()) {
+            _this5.isActivePython().then(function (answer) {
+              if (answer) {
+                _this5.installer = 'activepython';
+              }
+              resolve(_this5);
+            });
+          } else {
+            resolve(_this5);
+          }
+        }
+      });
     }
   }]);
 
