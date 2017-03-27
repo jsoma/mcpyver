@@ -46,38 +46,50 @@ describe('Python', () => {
 
     it('does not know by default', () => {
       python.detectInstaller()
-      assert.isUndefined(python.installer, 'does not have an installer')
+        .then(() => {
+          assert.isUndefined(python.installer, 'does not have an installer')
+        })
     })
 
     it('detects Anaconda 3 (All platforms)', () => {
       python.rawVersion = 'Python 3.6.0 :: Anaconda 4.3.0 (x86_64)'
       python.detectInstaller()
-      python.installer.should.equal('Anaconda')
+        .then(() => {
+          python.installer.should.equal('anaconda')
+        })
     })
 
     it('detects Anaconda 3 (Alternate, all platforms)', () => {
       python.rawVersion = 'Python 3.6.0 :: Continuum Analytics, Inc.'
       python.detectInstaller()
-      python.installer.should.equal('Anaconda')
+        .then(() => {
+          python.installer.should.equal('anaconda')
+        })
     })
 
     it('detects Miniconda 3 (All platforms)', () => {
       python.realpath = '/Users/jonathansoma/miniconda3/bin/python'
       python.rawVersion = 'Python 3.6.0 :: Continuum Analytics, Inc.'
       python.detectInstaller()
-      python.installer.should.equal('Miniconda')
+        .then(() => {
+          python.installer.should.equal('miniconda')
+        })
     })
 
     it('detects Enthought Canopy (OS X)', () => {
       python.realpath = '/Users/username/Library/Enthought/Canopy_64bit/User/bin/python'
       python.detectInstaller()
-      python.installer.should.equal('Canopy')
+        .then(() => {
+          python.installer.should.equal('canopy')
+        })
     })
 
     it('detects Homebrew (OS X)', () => {
       python.realpath = '/usr/local/Cellar/python/2.7.9/bin/python'
       python.detectInstaller()
-      python.installer.should.equal('Homebrew')
+        .then(() => {
+          python.installer.should.equal('homebrew')
+        })
     })
 
     // it('detects default installation (OS X)', () => {
@@ -95,23 +107,41 @@ describe('Python', () => {
     it('detects Python.org installer (Windows, Python 2)', () => {
       python.realpath = 'C:\\Python27\\Python.exe'
       python.detectInstaller()
-      python.installer.should.equal('Python.org')
+        .then(() => {
+          python.installer.should.equal('pythonorg')
+        })
     })
 
     it('detects Python.org installer (Windows, Python 3)', () => {
       python.realpath = 'C:\\Users\\username\\AppData\\Local\\Programs\\Python\\Python35'
       python.detectInstaller()
-      python.installer.should.equal('Python.org')
+        .then(() => {
+          python.installer.should.equal('pythonorg')
+        })
     })
 
     it('detects ActivePython (OS X)', () => {
       sinon.stub(python, 'isActivePython', () => {
-        return true
+        return Promise.resolve(true)
       })
 
       python.realpath = '/usr/blah/blah/blah'
       python.detectInstaller()
-      python.installer.should.equal('ActivePython')
+        .then(() => {
+          python.installer.should.equal('activepython')
+        })
+    })
+
+    it('detects ActivePython (OS X)', () => {
+      sinon.stub(python, 'isActivePython', () => {
+        return Promise.resolve(false)
+      })
+
+      python.realpath = '/usr/blah/blah/blah'
+      python.detectInstaller()
+        .then(() => {
+          assert.isUndefined(python.installer, 'does not have an installer')
+        })
     })
 
   })

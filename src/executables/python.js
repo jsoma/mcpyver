@@ -1,4 +1,4 @@
-import { exec, execSync } from '../executive'
+import { exec } from '../executive'
 import Executable from './executable'
 
 export default class PythonExecutable extends Executable {
@@ -38,52 +38,60 @@ export default class PythonExecutable extends Executable {
   }
 
   isActivePython () {
-    let cmd = `${this.path} -c "import activestate"`
-    try {
-      execSync(cmd)
-      return true
-    } catch (err) {
-      return false
-    }
+    return new Promise((resolve, reject) => {
+      let cmd = `${this.path} -c "import activestate"`
+      exec(cmd, (error, stdout) => {
+        reslve(!error)
+      })
+    })
   }
 
   detectInstaller () {
-    if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
-      this.installer = 'Anaconda'
-    }
-
-    /* NB: The Miniconda one also says Continuum, but Anaconda is probably more popular */
-    if (this.rawVersion && this.rawVersion.indexOf('Continuum') !== -1) {
-      this.installer = 'Anaconda'
-    }
-
-    if (this.realpath) {
-      /* Custom Distributions */
-      if (this.pathContains('Enthought')) { this.installer = 'Canopy' }
-      if (this.pathContains('Canopy')) { this.installer = 'Canopy' }
-      if (this.pathContains('anaconda')) { this.installer = 'Anaconda' }
-      if (this.pathContains('miniconda')) { this.installer = 'Miniconda' }
-
-      /* OS X */
-      if (this.pathContains('Cellar')) { this.installer = 'Homebrew' }
-      /* Note the order on these! */
-      /* Honestly though I guess we don't know, anything can install here */
-      // if (this.pathContains('/Library/Frameworks/Python.framework')) { this.installer = 'Python.org' }
-      // if (this.pathContains('/System/Library/Frameworks/Python.framework')) { this.installer = 'Default-OSX' }
-
-      /* Windows */
-      if (this.pathContains(':\\PYTHON27\\PYTHON')) { this.installer = 'Python.org' }
-      if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) { this.installer = 'Python.org' }
-
-      /* if nothing else, test for ActivePython/ActiveState since it isn't in --version */
-      if (!this.installer && this.isActivePython()) {
-        this.installer = 'ActivePython'
+    return new Promise((resolve, reject) => {
+      if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
+        this.installer = 'anaconda'
       }
-    }
 
-    if (this.installer) {
-      this.installerSlug = this.installer.toLowerCase().replace(/[^A-Za-z]/, '')
-    }
+      /* NB: The Miniconda one also says Continuum, but Anaconda is probably more popular */
+      if (this.rawVersion && this.rawVersion.indexOf('Continuum') !== -1) {
+        this.installer = 'anaconda'
+      }
+
+      if (this.realpath) {
+        /* Custom Distributions */
+        if (this.pathContains('Enthought')) { this.installer = 'canopy' }
+        if (this.pathContains('Canopy')) { this.installer = 'canopy' }
+        if (this.pathContains('anaconda')) { this.installer = 'anaconda' }
+        if (this.pathContains('miniconda')) { this.installer = 'miniconda' }
+
+        /* OS X */
+        if (this.pathContains('Cellar')) { this.installer = 'homebrew' }
+        /* Note the order on these! */
+        /* Honestly though I guess we don't know, anything can install here */
+        // if (this.pathContains('/Library/Frameworks/Python.framework')) { this.installer = 'Python.org' }
+        // if (this.pathContains('/System/Library/Frameworks/Python.framework')) { this.installer = 'Default-OSX' }
+
+        /* Windows */
+        if (this.pathContains(':\\PYTHON27\\PYTHON')) { this.installer = 'pythonorg' }
+        if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) { this.installer = 'pythonorg' }
+
+        /* if nothing else, test for ActivePython/ActiveState since it isn't in --version */
+        if (!this.installer && this.isActivePython()) {
+          this.isActivePython()
+            .then(answer => {
+              if(answer) {
+                this.installer = 'activepython'
+              }
+              resolve(this)
+            })
+            .catch((err) => {
+              resolve(this)
+            })
+        } else {
+          resolve(this)
+        }
+      }
+    })
   }
 
 }
