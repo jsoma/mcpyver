@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { execFile } from '../executive'
 import { PipExecutable, PythonExecutable } from '../executables'
 
 export default class Environment {
@@ -59,7 +59,7 @@ export default class Environment {
 
   static isInstalled () {
     return new Promise((resolve, reject) => {
-      exec(`${this.command} --version`, (error, stdout, stderr) => {
+      execFile(this.command, ['--version'], (error, stdout, stderr) => {
         // TODO
         if (error) {
           reject(error)

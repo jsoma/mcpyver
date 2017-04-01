@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { execFile } from '../executive'
 import { stat, realpathSync } from 'fs'
 import { which } from 'shelljs'
 import ExecutableCollection from './executable_collection'
@@ -99,7 +99,7 @@ export default class Executable {
    */
   requestVersion () {
     return new Promise((resolve, reject) => {
-      exec(`${this.path} --version`, (error, stdout, stderr) => {
+      execFile(this.path, ['--version'], (error, stdout, stderr) => {
         if (error) {
           reject(error)
         }

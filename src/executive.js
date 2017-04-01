@@ -1,4 +1,4 @@
-import { exec as cpExec, execSync as cpExecSync } from 'child_process'
+import { exec as cpExec, execSync as cpExecSync, execFile as cpExecFile } from 'child_process'
 
 let CACHE = {}
 
@@ -8,6 +8,29 @@ export function clear () {
 
 export function execSync (command) {
   return cpExecSync(command)
+}
+
+export function execFile (command, params, callback) {
+  let signature = [ command, ...params ].join(' ')
+
+  /* Keep things in the cache for 5 seconds */
+  if (signature in CACHE && Date.now() - CACHE[signature].timestamp < 5000) {
+    callback(
+      CACHE[signature].error,
+      CACHE[signature].stdout,
+      CACHE[signature].stderr
+    )
+  } else {
+    cpExecFile(command, params, (error, stdout, stderr) => {
+      CACHE[signature] = {
+        error: error,
+        stdout: stdout,
+        stderr: stderr,
+        timestamp: Date.now()
+      }
+      callback(error, stdout, stderr)
+    })
+  }
 }
 
 export function exec (command, callback, options = {}) {

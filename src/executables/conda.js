@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { execFile } from '../executive'
 import Executable from './executable'
 import { CondaEnv } from '../environments'
 
@@ -31,7 +31,8 @@ export default class CondaExecutable extends Executable {
 
   getDetails () {
     return new Promise((resolve, reject) => {
-      exec(`${this.path} info --envs --json`, (error, stdout, stderr) => {
+      let params = ['info', '--envs', '--json']
+      execFile(this.path, params, (error, stdout, stderr) => {
         if (error) {
           reject(error)
         } else {

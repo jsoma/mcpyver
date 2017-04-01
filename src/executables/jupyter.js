@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { execFile } from '../executive'
 import { realpath } from 'fs'
 import Executable from './executable'
 
@@ -28,7 +28,8 @@ export default class JupyterExecutable extends Executable {
 
   getKernels () {
     return new Promise((resolve, reject) => {
-      exec(`${this.path} kernelspec list --json`, (error, stdout, stderr) => {
+      let params = ['kernelspec', 'list', '--json']
+      execFile(this.path, params, (error, stdout, stderr) => {
         // TODO
         if (error) {
           reject(error)

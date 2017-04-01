@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { execFile } from '../executive'
 import Executable from './executable'
 
 export default class PythonExecutable extends Executable {
@@ -21,8 +21,8 @@ export default class PythonExecutable extends Executable {
   setSysPath () {
     return new Promise((resolve, reject) => {
       let exportCmd = "import sys; print(':::'.join(path for path in sys.path if path))"
-      let cmd = `${this.path} -c "${exportCmd}"`
-      exec(cmd, (error, stdout, stderr) => {
+      let params = ['-c', `"${exportCmd}"`]
+      execFile(this.path, params, (error, stdout, stderr) => {
         // TODO
         if (error) {
           reject(error)
@@ -39,8 +39,8 @@ export default class PythonExecutable extends Executable {
 
   isActivePython () {
     return new Promise((resolve, reject) => {
-      let cmd = `${this.path} -c "import activestate"`
-      exec(cmd, (error, stdout) => {
+      let params = ['-c', '"import activestate"']
+      execFile(this.path, params, (error, stdout) => {
         resolve(!error)
       })
     })

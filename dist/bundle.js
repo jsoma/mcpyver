@@ -548,9 +548,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.clear = clear;
 exports.execSync = execSync;
+exports.execFile = execFile;
 exports.exec = exec;
 
 var _child_process = __webpack_require__(49);
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var CACHE = {};
 
@@ -560,6 +563,24 @@ function clear() {
 
 function execSync(command) {
   return (0, _child_process.execSync)(command);
+}
+
+function execFile(command, params, callback) {
+  var signature = [command].concat(_toConsumableArray(params)).join(' ');
+
+  if (signature in CACHE && Date.now() - CACHE[signature].timestamp < 5000) {
+    callback(CACHE[signature].error, CACHE[signature].stdout, CACHE[signature].stderr);
+  } else {
+    (0, _child_process.execFile)(command, params, function (error, stdout, stderr) {
+      CACHE[signature] = {
+        error: error,
+        stdout: stdout,
+        stderr: stderr,
+        timestamp: Date.now()
+      };
+      callback(error, stdout, stderr);
+    });
+  }
 }
 
 function exec(command, callback) {
@@ -658,7 +679,7 @@ var Executable = function () {
       var _this = this;
 
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)(_this.path + ' --version', function (error, stdout, stderr) {
+        (0, _executive.execFile)(_this.path, ['--version'], function (error, stdout, stderr) {
           if (error) {
             reject(error);
           }
@@ -1766,7 +1787,7 @@ var Environment = function () {
       var _this4 = this;
 
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)(_this4.command + ' --version', function (error, stdout, stderr) {
+        (0, _executive.execFile)(_this4.command, ['--version'], function (error, stdout, stderr) {
           if (error) {
             reject(error);
           }
@@ -6418,7 +6439,8 @@ var CondaEnv = function (_Environment) {
       var _this3 = this;
 
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)('conda list --prefix ' + _this3.basepath + ' --json', function (error, stdout, stderr) {
+        var params = ['list', '--prefix', _this3.basepath, '--json'];
+        (0, _executive.execFile)('conda', params, function (error, stdout, stderr) {
           if (error) {
             return reject(error);
           }
@@ -6447,7 +6469,8 @@ var CondaEnv = function (_Environment) {
     key: 'lsenvs',
     value: function lsenvs() {
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)('conda info --envs --json', function (error, stdout, stderr) {
+        var params = ['info', '--envs', '--json'];
+        (0, _executive.execFile)('conda', params, function (error, stdout, stderr) {
           if (error) {
             reject(error);
           } else {
@@ -6658,7 +6681,8 @@ var CondaExecutable = function (_Executable) {
       var _this4 = this;
 
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)(_this4.path + ' info --envs --json', function (error, stdout, stderr) {
+        var params = ['info', '--envs', '--json'];
+        (0, _executive.execFile)(_this4.path, params, function (error, stdout, stderr) {
           if (error) {
             reject(error);
           } else {
@@ -6894,7 +6918,8 @@ var JupyterExecutable = function (_Executable) {
       var _this3 = this;
 
       return new Promise(function (resolve, reject) {
-        (0, _executive.exec)(_this3.path + ' kernelspec list --json', function (error, stdout, stderr) {
+        var params = ['kernelspec', 'list', '--json'];
+        (0, _executive.execFile)(_this3.path, params, function (error, stdout, stderr) {
           if (error) {
             reject(error);
           }
@@ -7011,9 +7036,7 @@ var PipExecutable = function (_Executable) {
       var _this4 = this;
 
       return new Promise(function (resolve, reject) {
-        var listCommand = _this4.path + ' list';
-
-        (0, _executive.exec)(listCommand, function (error, stdout, stderr) {
+        (0, _executive.execFile)(_this4.path, ['list'], function (error, stdout, stderr) {
           if (error) {
             reject(error);
           }
@@ -7145,8 +7168,8 @@ var PythonExecutable = function (_Executable) {
 
       return new Promise(function (resolve, reject) {
         var exportCmd = "import sys; print(':::'.join(path for path in sys.path if path))";
-        var cmd = _this3.path + ' -c "' + exportCmd + '"';
-        (0, _executive.exec)(cmd, function (error, stdout, stderr) {
+        var params = ['-c', '"' + exportCmd + '"'];
+        (0, _executive.execFile)(_this3.path, params, function (error, stdout, stderr) {
           if (error) {
             reject(error);
           }
@@ -7166,8 +7189,8 @@ var PythonExecutable = function (_Executable) {
       var _this4 = this;
 
       return new Promise(function (resolve, reject) {
-        var cmd = _this4.path + ' -c "import activestate"';
-        (0, _executive.exec)(cmd, function (error, stdout) {
+        var params = ['-c', '"import activestate"'];
+        (0, _executive.execFile)(_this4.path, params, function (error, stdout) {
           resolve(!error);
         });
       });

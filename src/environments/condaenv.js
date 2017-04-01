@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { exec, execFile } from '../executive'
 import { basename } from 'path'
 import Environment from './environment'
 
@@ -23,7 +23,8 @@ export default class CondaEnv extends Environment {
 
   getPackages () {
     return new Promise((resolve, reject) => {
-      exec(`conda list --prefix ${this.basepath} --json`, (error, stdout, stderr) => {
+      let params = ['list', '--prefix', this.basepath, '--json']
+      execFile('conda', params, (error, stdout, stderr) => {
         if (error) {
           return reject(error)
         }
@@ -48,7 +49,8 @@ export default class CondaEnv extends Environment {
 
   static lsenvs () {
     return new Promise((resolve, reject) => {
-      exec(`conda info --envs --json`, (error, stdout, stderr) => {
+      let params = ['info', '--envs', '--json']
+      execFile('conda', params, (error, stdout, stderr) => {
         if (error) {
           reject(error)
         } else {

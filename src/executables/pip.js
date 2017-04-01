@@ -1,4 +1,4 @@
-import { exec } from '../executive'
+import { execFile } from '../executive'
 import { ls } from 'shelljs'
 import { access, constants } from 'fs'
 import Executable from './executable'
@@ -49,9 +49,7 @@ export default class PipExecutable extends Executable {
 
   getPackageListing () {
     return new Promise((resolve, reject) => {
-      let listCommand = `${this.path} list`
-
-      exec(listCommand, (error, stdout, stderr) => {
+      execFile(this.path, ['list'], (error, stdout, stderr) => {
         if (error) {
           reject(error)
         }
