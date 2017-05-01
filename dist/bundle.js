@@ -7172,9 +7172,10 @@ var PythonExecutable = function (_Executable) {
         var params = ['-c', '"' + exportCmd + '"'];
         (0, _executive.execFile)(_this3.path, params, function (error, stdout, stderr) {
           if (error) {
-            reject(error);
+            _this3.addError(error);
+          } else {
+            _this3.sysPath = stdout.trim().split(':::');
           }
-          _this3.sysPath = stdout.trim().split(':::');
           resolve(_this3);
         });
       });

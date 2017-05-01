@@ -23,11 +23,11 @@ export default class PythonExecutable extends Executable {
       let exportCmd = "import sys; print(':::'.join(path for path in sys.path if path))"
       let params = ['-c', `"${exportCmd}"`]
       execFile(this.path, params, (error, stdout, stderr) => {
-        // TODO
         if (error) {
-          reject(error)
+          this.addError(error)
+        } else {
+          this.sysPath = stdout.trim().split(':::')
         }
-        this.sysPath = stdout.trim().split(':::')
         resolve(this)
       })
     })
