@@ -6903,9 +6903,10 @@ var JupyterExecutable = function (_Executable) {
         return new Promise(function (resolve, reject) {
           (0, _fs.realpath)(kernel.spec.argv[0], function (error, path) {
             if (error) {
-              reject(error);
+              _this2.addError(error);
+            } else {
+              kernel.realpath = path;
             }
-            kernel.realpath = path;
             resolve(_this2);
           });
         });

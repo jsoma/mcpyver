@@ -14,11 +14,11 @@ export default class JupyterExecutable extends Executable {
     let promises = this.kernels.map(kernel => {
       return new Promise((resolve, reject) => {
         realpath(kernel.spec.argv[0], (error, path) => {
-          // TODO
           if (error) {
-            reject(error)
+            this.addError(error)
+          } else {
+            kernel.realpath = path
           }
-          kernel.realpath = path
           resolve(this)
         })
       })
