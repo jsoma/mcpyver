@@ -20,8 +20,8 @@ export default class PythonExecutable extends Executable {
 
   setSysPath () {
     return new Promise((resolve, reject) => {
-      let exportCmd = "import sys; print(':::'.join(path for path in sys.path if path))"
-      let params = ['-c', `"${exportCmd}"`]
+      let exportCmd = "import sys; print(':::'.join([path for path in sys.path if path]))"
+      let params = ['-c', exportCmd]
       execFile(this.path, params, (error, stdout, stderr) => {
         if (error) {
           this.addError(error)

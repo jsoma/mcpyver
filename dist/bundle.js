@@ -7168,8 +7168,8 @@ var PythonExecutable = function (_Executable) {
       var _this3 = this;
 
       return new Promise(function (resolve, reject) {
-        var exportCmd = "import sys; print(':::'.join(path for path in sys.path if path))";
-        var params = ['-c', '"' + exportCmd + '"'];
+        var exportCmd = "import sys; print(':::'.join([path for path in sys.path if path]))";
+        var params = ['-c', exportCmd];
         (0, _executive.execFile)(_this3.path, params, function (error, stdout, stderr) {
           if (error) {
             _this3.addError(error);
