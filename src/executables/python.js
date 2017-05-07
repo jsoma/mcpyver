@@ -46,6 +46,18 @@ export default class PythonExecutable extends Executable {
     })
   }
 
+  isXyPython () {
+    return new Promise((resolve, reject) => {
+      let params = ['-m pip --version']
+      execFile(this.path, params, (error, stdout) => {
+        if (error) {
+          resolve(false)
+        }
+        resolve(stdout.indexOf('xy') !== -1)
+      })
+    })
+  }
+
   detectInstaller () {
     return new Promise((resolve, reject) => {
       if (this.rawVersion && this.rawVersion.indexOf('Anaconda') !== -1) {
@@ -55,9 +67,6 @@ export default class PythonExecutable extends Executable {
       /* NB: The Miniconda one also says Continuum, but Anaconda is probably more popular */
       if (this.rawVersion && this.rawVersion.indexOf('Continuum') !== -1) {
         this.installer = 'anaconda'
-      }
-      if (this.rawVersion && this.rawVersion.indexOf('xy') !== -1) {
-        this.installer = 'xy'
       }
 
       if (this.realpath) {
@@ -79,14 +88,18 @@ export default class PythonExecutable extends Executable {
         if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) { this.installer = 'pythonorg' }
 
         /* if nothing else, test for ActivePython/ActiveState since it isn't in --version */
-        if (!this.installer && this.isActivePython()) {
-          this.isActivePython()
-            .then(answer => {
-              if (answer) {
-                this.installer = 'activepython'
-              }
-              resolve(this)
-            })
+        if (!this.installer) {
+          return Promise.all([
+            this.isActivePython,
+            this.isXyPython
+          ]).then((isA, isXy) => {
+            if (isA) {
+              this.installer = 'activepython'
+            }
+            if (isXy) {
+              this.installer = 'xy'
+            }
+          })
         } else {
           resolve(this)
         }

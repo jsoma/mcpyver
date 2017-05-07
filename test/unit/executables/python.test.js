@@ -137,6 +137,19 @@ describe('Python', () => {
         })
     })
 
+    it('detects (x,y) Python (Win)', () => {
+      sandbox.stub(python, 'isXyPython', () => {
+        return Promise.resolve(true)
+      })
+
+      python.realpath = '/usr/blah/blah/blah'
+      python.detectInstaller()
+        .then(() => {
+          python.installer.should.equal('xy')
+        })
+    })
+
+
     it('detects ActivePython (OS X)', () => {
       sandbox.stub(python, 'isActivePython', () => {
         return Promise.resolve(false)

@@ -7214,56 +7214,70 @@ var PythonExecutable = function (_Executable) {
       });
     }
   }, {
-    key: 'detectInstaller',
-    value: function detectInstaller() {
+    key: 'isXyPython',
+    value: function isXyPython() {
       var _this5 = this;
 
       return new Promise(function (resolve, reject) {
-        if (_this5.rawVersion && _this5.rawVersion.indexOf('Anaconda') !== -1) {
-          _this5.installer = 'anaconda';
+        var params = ['-m pip --version'];
+        (0, _executive.execFile)(_this5.path, params, function (error, stdout) {
+          if (error) {
+            resolve(false);
+          }
+          resolve(stdout.indexOf('xy') !== -1);
+        });
+      });
+    }
+  }, {
+    key: 'detectInstaller',
+    value: function detectInstaller() {
+      var _this6 = this;
+
+      return new Promise(function (resolve, reject) {
+        if (_this6.rawVersion && _this6.rawVersion.indexOf('Anaconda') !== -1) {
+          _this6.installer = 'anaconda';
         }
 
-        if (_this5.rawVersion && _this5.rawVersion.indexOf('Continuum') !== -1) {
-          _this5.installer = 'anaconda';
-        }
-        if (_this5.rawVersion && _this5.rawVersion.indexOf('xy') !== -1) {
-          _this5.installer = 'xy';
+        if (_this6.rawVersion && _this6.rawVersion.indexOf('Continuum') !== -1) {
+          _this6.installer = 'anaconda';
         }
 
-        if (_this5.realpath) {
-          if (_this5.pathContains('Enthought')) {
-            _this5.installer = 'canopy';
+        if (_this6.realpath) {
+          if (_this6.pathContains('Enthought')) {
+            _this6.installer = 'canopy';
           }
-          if (_this5.pathContains('Canopy')) {
-            _this5.installer = 'canopy';
+          if (_this6.pathContains('Canopy')) {
+            _this6.installer = 'canopy';
           }
-          if (_this5.pathContains('anaconda')) {
-            _this5.installer = 'anaconda';
+          if (_this6.pathContains('anaconda')) {
+            _this6.installer = 'anaconda';
           }
-          if (_this5.pathContains('miniconda')) {
-            _this5.installer = 'miniconda';
-          }
-
-          if (_this5.pathContains('Cellar')) {
-            _this5.installer = 'homebrew';
+          if (_this6.pathContains('miniconda')) {
+            _this6.installer = 'miniconda';
           }
 
-          if (_this5.pathContains(':\\PYTHON27\\PYTHON')) {
-            _this5.installer = 'pythonorg';
-          }
-          if (_this5.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
-            _this5.installer = 'pythonorg';
+          if (_this6.pathContains('Cellar')) {
+            _this6.installer = 'homebrew';
           }
 
-          if (!_this5.installer && _this5.isActivePython()) {
-            _this5.isActivePython().then(function (answer) {
-              if (answer) {
-                _this5.installer = 'activepython';
+          if (_this6.pathContains(':\\PYTHON27\\PYTHON')) {
+            _this6.installer = 'pythonorg';
+          }
+          if (_this6.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
+            _this6.installer = 'pythonorg';
+          }
+
+          if (!_this6.installer) {
+            return Promise.all([_this6.isActivePython, _this6.isXyPython]).then(function (isA, isXy) {
+              if (isA) {
+                _this6.installer = 'activepython';
               }
-              resolve(_this5);
+              if (isXy) {
+                _this6.installer = 'xy';
+              }
             });
           } else {
-            resolve(_this5);
+            resolve(_this6);
           }
         }
       });
@@ -7271,12 +7285,12 @@ var PythonExecutable = function (_Executable) {
   }, {
     key: 'assureMergeable',
     value: function assureMergeable() {
-      var _this6 = this;
+      var _this7 = this;
 
       return this.setVersion().then(function () {
-        return _this6.setSysPath();
+        return _this7.setSysPath();
       }).catch(function (err) {
-        return _this6.addError(err);
+        return _this7.addError(err);
       });
     }
   }, {
