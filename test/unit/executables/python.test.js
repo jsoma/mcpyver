@@ -142,7 +142,7 @@ describe('Python', () => {
         return Promise.resolve(true)
       })
 
-      python.realpath = '/usr/blah/blah/blah'
+      python.realpath = 'C:\\PYTHON27\\PYTHON.EXE'
       python.detectInstaller()
         .then(() => {
           python.installer.should.equal('xy')
@@ -150,8 +150,11 @@ describe('Python', () => {
     })
 
 
-    it('detects ActivePython (OS X)', () => {
+    it('detects lack of an installer', () => {
       sandbox.stub(python, 'isActivePython', () => {
+        return Promise.resolve(false)
+      })
+      sandbox.stub(python, 'isXyPython', () => {
         return Promise.resolve(false)
       })
 

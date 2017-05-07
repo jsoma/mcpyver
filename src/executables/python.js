@@ -48,7 +48,7 @@ export default class PythonExecutable extends Executable {
 
   isXyPython () {
     return new Promise((resolve, reject) => {
-      let params = ['-m','pip','--version']
+      let params = ['-m', 'pip', '--version']
       execFile(this.path, params, (error, stdout) => {
         if (error) {
           resolve(false)
@@ -84,7 +84,6 @@ export default class PythonExecutable extends Executable {
         // if (this.pathContains('/System/Library/Frameworks/Python.framework')) { this.installer = 'Default-OSX' }
 
         /* Windows */
-        if (this.pathContains(':\\PYTHON27\\PYTHON')) { this.installer = 'pythonorg' }
         if (this.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) { this.installer = 'pythonorg' }
 
         /* if nothing else, test for ActivePython/ActiveState since it isn't in --version */

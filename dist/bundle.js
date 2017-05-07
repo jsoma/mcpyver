@@ -7219,7 +7219,7 @@ var PythonExecutable = function (_Executable) {
       var _this5 = this;
 
       return new Promise(function (resolve, reject) {
-        var params = ['-m pip --version'];
+        var params = ['-m', 'pip', '--version'];
         (0, _executive.execFile)(_this5.path, params, function (error, stdout) {
           if (error) {
             resolve(false);
@@ -7260,21 +7260,19 @@ var PythonExecutable = function (_Executable) {
             _this6.installer = 'homebrew';
           }
 
-          if (_this6.pathContains(':\\PYTHON27\\PYTHON')) {
-            _this6.installer = 'pythonorg';
-          }
           if (_this6.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
             _this6.installer = 'pythonorg';
           }
 
           if (!_this6.installer) {
-            return Promise.all([_this6.isActivePython, _this6.isXyPython]).then(function (isA, isXy) {
-              if (isA) {
+            return Promise.all([_this6.isActivePython(), _this6.isXyPython()]).then(function (values) {
+              if (values[0]) {
                 _this6.installer = 'activepython';
               }
-              if (isXy) {
+              if (values[1]) {
                 _this6.installer = 'xy';
               }
+              resolve(_this6);
             });
           } else {
             resolve(_this6);
