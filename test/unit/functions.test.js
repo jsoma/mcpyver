@@ -107,6 +107,7 @@ describe('functions', () => {
       // return funcs.getConda()
       //   .then(result => {
       //     let processed = JSON.parse(JSON.stringify(result))
+      //     console.log(processed)
       //     // console.log(JSON.stringify(processed, null, 4))
       //     // console.log(JSON.stringify(result))
       //   })
