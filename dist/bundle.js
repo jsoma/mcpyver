@@ -7207,7 +7207,7 @@ var PythonExecutable = function (_Executable) {
       var _this4 = this;
 
       return new Promise(function (resolve, reject) {
-        var params = ['-c', '"import activestate"'];
+        var params = ['-c', 'import activestate'];
         (0, _executive.execFile)(_this4.path, params, function (error, stdout) {
           resolve(!error);
         });
@@ -7219,7 +7219,7 @@ var PythonExecutable = function (_Executable) {
       var _this5 = this;
 
       return new Promise(function (resolve, reject) {
-        var params = ['-c', '"import winpython"'];
+        var params = ['-c', 'import winpython'];
         (0, _executive.execFile)(_this5.path, params, function (error, stdout) {
           resolve(!error);
         });
