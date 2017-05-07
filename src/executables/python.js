@@ -46,6 +46,15 @@ export default class PythonExecutable extends Executable {
     })
   }
 
+  isWinPython () {
+    return new Promise((resolve, reject) => {
+      let params = ['-c', '"import winpython"']
+      execFile(this.path, params, (error, stdout) => {
+        resolve(!error)
+      })
+    })
+  }
+
   isXyPython () {
     return new Promise((resolve, reject) => {
       let params = ['-m', 'pip', '--version']
@@ -90,13 +99,17 @@ export default class PythonExecutable extends Executable {
         if (!this.installer) {
           return Promise.all([
             this.isActivePython(),
-            this.isXyPython()
+            this.isXyPython(),
+            this.isWinPython()
           ]).then((values) => {
             if (values[0]) {
               this.installer = 'activepython'
             }
             if (values[1]) {
               this.installer = 'xy'
+            }
+            if (values[2]) {
+              this.installer = 'winpython'
             }
             resolve(this)
           })

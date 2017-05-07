@@ -7214,13 +7214,25 @@ var PythonExecutable = function (_Executable) {
       });
     }
   }, {
-    key: 'isXyPython',
-    value: function isXyPython() {
+    key: 'isWinPython',
+    value: function isWinPython() {
       var _this5 = this;
 
       return new Promise(function (resolve, reject) {
-        var params = ['-m', 'pip', '--version'];
+        var params = ['-c', '"import winpython"'];
         (0, _executive.execFile)(_this5.path, params, function (error, stdout) {
+          resolve(!error);
+        });
+      });
+    }
+  }, {
+    key: 'isXyPython',
+    value: function isXyPython() {
+      var _this6 = this;
+
+      return new Promise(function (resolve, reject) {
+        var params = ['-m', 'pip', '--version'];
+        (0, _executive.execFile)(_this6.path, params, function (error, stdout) {
           if (error) {
             resolve(false);
           }
@@ -7231,51 +7243,54 @@ var PythonExecutable = function (_Executable) {
   }, {
     key: 'detectInstaller',
     value: function detectInstaller() {
-      var _this6 = this;
+      var _this7 = this;
 
       return new Promise(function (resolve, reject) {
-        if (_this6.rawVersion && _this6.rawVersion.indexOf('Anaconda') !== -1) {
-          _this6.installer = 'anaconda';
+        if (_this7.rawVersion && _this7.rawVersion.indexOf('Anaconda') !== -1) {
+          _this7.installer = 'anaconda';
         }
 
-        if (_this6.rawVersion && _this6.rawVersion.indexOf('Continuum') !== -1) {
-          _this6.installer = 'anaconda';
+        if (_this7.rawVersion && _this7.rawVersion.indexOf('Continuum') !== -1) {
+          _this7.installer = 'anaconda';
         }
 
-        if (_this6.realpath) {
-          if (_this6.pathContains('Enthought')) {
-            _this6.installer = 'canopy';
+        if (_this7.realpath) {
+          if (_this7.pathContains('Enthought')) {
+            _this7.installer = 'canopy';
           }
-          if (_this6.pathContains('Canopy')) {
-            _this6.installer = 'canopy';
+          if (_this7.pathContains('Canopy')) {
+            _this7.installer = 'canopy';
           }
-          if (_this6.pathContains('anaconda')) {
-            _this6.installer = 'anaconda';
+          if (_this7.pathContains('anaconda')) {
+            _this7.installer = 'anaconda';
           }
-          if (_this6.pathContains('miniconda')) {
-            _this6.installer = 'miniconda';
-          }
-
-          if (_this6.pathContains('Cellar')) {
-            _this6.installer = 'homebrew';
+          if (_this7.pathContains('miniconda')) {
+            _this7.installer = 'miniconda';
           }
 
-          if (_this6.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
-            _this6.installer = 'pythonorg';
+          if (_this7.pathContains('Cellar')) {
+            _this7.installer = 'homebrew';
           }
 
-          if (!_this6.installer) {
-            return Promise.all([_this6.isActivePython(), _this6.isXyPython()]).then(function (values) {
+          if (_this7.pathContains('APPDATA\\LOCAL\\PROGRAMS\\PYTHON')) {
+            _this7.installer = 'pythonorg';
+          }
+
+          if (!_this7.installer) {
+            return Promise.all([_this7.isActivePython(), _this7.isXyPython(), _this7.isWinPython()]).then(function (values) {
               if (values[0]) {
-                _this6.installer = 'activepython';
+                _this7.installer = 'activepython';
               }
               if (values[1]) {
-                _this6.installer = 'xy';
+                _this7.installer = 'xy';
               }
-              resolve(_this6);
+              if (values[2]) {
+                _this7.installer = 'winpython';
+              }
+              resolve(_this7);
             });
           } else {
-            resolve(_this6);
+            resolve(_this7);
           }
         }
       });
@@ -7283,12 +7298,12 @@ var PythonExecutable = function (_Executable) {
   }, {
     key: 'assureMergeable',
     value: function assureMergeable() {
-      var _this7 = this;
+      var _this8 = this;
 
       return this.setVersion().then(function () {
-        return _this7.setSysPath();
+        return _this8.setSysPath();
       }).catch(function (err) {
-        return _this7.addError(err);
+        return _this8.addError(err);
       });
     }
   }, {

@@ -47,6 +47,15 @@ describe('Python', () => {
     beforeEach(() => {
       python = new PythonExecutable('/a/path', 'python')
       python.realpath = '/somewhere/random/'
+      sandbox.stub(python, 'isActivePython', () => {
+        return Promise.resolve(false)
+      })
+      sandbox.stub(python, 'isXyPython', () => {
+        return Promise.resolve(false)
+      })
+      sandbox.stub(python, 'isWinPython', () => {
+        return Promise.resolve(false)
+      })
     })
 
     it('does not know by default', () => {
@@ -109,14 +118,6 @@ describe('Python', () => {
     //   python.installer.should.equal('Python.org')
     // })
 
-    it('detects Python.org installer (Windows, Python 2)', () => {
-      python.realpath = 'C:\\Python27\\Python.exe'
-      python.detectInstaller()
-        .then(() => {
-          python.installer.should.equal('pythonorg')
-        })
-    })
-
     it('detects Python.org installer (Windows, Python 3)', () => {
       python.realpath = 'C:\\Users\\username\\AppData\\Local\\Programs\\Python\\Python35'
       python.detectInstaller()
@@ -126,6 +127,7 @@ describe('Python', () => {
     })
 
     it('detects ActivePython (OS X)', () => {
+      python.isActivePython.restore()
       sandbox.stub(python, 'isActivePython', () => {
         return Promise.resolve(true)
       })
@@ -137,7 +139,8 @@ describe('Python', () => {
         })
     })
 
-    it('detects (x,y) Python (Win)', () => {
+    it('detects Python(x,y) (Win)', () => {
+      python.isXyPython.restore()
       sandbox.stub(python, 'isXyPython', () => {
         return Promise.resolve(true)
       })
@@ -149,15 +152,20 @@ describe('Python', () => {
         })
     })
 
+    it('detects WinPython (Win)', () => {
+      python.isWinPython.restore()
+      sandbox.stub(python, 'isWinPython', () => {
+        return Promise.resolve(true)
+      })
+
+      python.realpath = 'C:\\PYTHON27\\PYTHON.EXE'
+      python.detectInstaller()
+        .then(() => {
+          python.installer.should.equal('winpython')
+        })
+    })
 
     it('detects lack of an installer', () => {
-      sandbox.stub(python, 'isActivePython', () => {
-        return Promise.resolve(false)
-      })
-      sandbox.stub(python, 'isXyPython', () => {
-        return Promise.resolve(false)
-      })
-
       python.realpath = '/usr/blah/blah/blah'
       python.detectInstaller()
         .then(() => {
