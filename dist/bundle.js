@@ -886,7 +886,7 @@ var Executable = function () {
   }, {
     key: 'searchPaths',
     get: function get() {
-      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*/bin'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*/bin'), '/Library/Frameworks/Python.framework/Versions/*/bin/', '/System/Library/Frameworks/Python.framework/Versions/*/bin/'];
+      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*/bin'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*/bin'), '/Library/Frameworks/Python.framework/Versions/*/bin/', '/System/Library/Frameworks/Python.framework/Versions/*/bin/', (0, _path.join)((0, _os.homedir)(), '..', '..', 'Python27/Scripts'), (0, _path.join)((0, _os.homedir)(), '..', '..', 'Python35/Scripts'), (0, _path.join)((0, _os.homedir)(), 'Python*/'), (0, _path.join)((0, _os.homedir)(), 'Python*/Scripts')];
     }
   }]);
 
@@ -6794,6 +6794,7 @@ var ExecutableCollection = function (_extendableBuiltin2) {
           var e = _step.value;
 
           var mergeField = e.mergeField;
+
           if (!mergeField) {
             mergeField = 'error';
           }
@@ -6995,23 +6996,35 @@ var PipExecutable = function (_Executable) {
   }, {
     key: 'setPythonVersion',
     value: function setPythonVersion() {
-      this.pythonVersion = this.rawVersion.trim().match(/python ([\d.]+)/i)[1];
+      if (this.rawVersion) {
+        this.pythonVersion = this.rawVersion.trim().match(/python ([\d.]+)/i)[1];
+      }
     }
   }, {
     key: 'cleanVersion',
     value: function cleanVersion() {
-      return this.rawVersion.trim().match(/pip ([\d.]+)/i)[1];
+      if (this.rawVersion) {
+        return this.rawVersion.trim().match(/pip ([\d.]+)/i)[1];
+      }
     }
   }, {
     key: 'setPackageDirectory',
     value: function setPackageDirectory() {
-      this.packageDir = this.rawVersion.trim().match(/pip [\d.]+ from (.*) \(python/)[1];
+      if (this.rawVersion) {
+        var matches = this.rawVersion.trim().match(/pip [\d.]+ from (.*) \(python/);
+        if (matches) {
+          this.packageDir = matches[1];
+        }
+      }
     }
   }, {
     key: 'setPackageDirectoryDetails',
     value: function setPackageDirectoryDetails() {
       var _this2 = this;
 
+      if (!this.packageDir) {
+        return;
+      }
       this.packageDirDetails = (0, _shelljs.ls)('-dl', this.packageDir)[0];
       return new Promise(function (resolve, reject) {
         (0, _fs.access)(_this2.packageDir, _fs.constants.R_OK | _fs.constants.W_OK, function (err) {
@@ -7055,12 +7068,15 @@ var PipExecutable = function (_Executable) {
       return this.getPackageListing().then(function (listing) {
         _this5.packages = PipExecutable.parsePackageList(listing);
         return _this5;
+      }).catch(function (err) {
+        _this5.packages = [];
+        _this5.addError(err);
       });
     }
   }, {
     key: 'mergeField',
     get: function get() {
-      return this.packageDir;
+      return this.rawVersion;
     }
   }], [{
     key: 'parsePackageList',
@@ -7210,6 +7226,9 @@ var PythonExecutable = function (_Executable) {
         if (_this5.rawVersion && _this5.rawVersion.indexOf('Continuum') !== -1) {
           _this5.installer = 'anaconda';
         }
+        if (_this5.rawVersion && _this5.rawVersion.indexOf('xy') !== -1) {
+          _this5.installer = 'xy';
+        }
 
         if (_this5.realpath) {
           if (_this5.pathContains('Enthought')) {
@@ -7247,6 +7266,25 @@ var PythonExecutable = function (_Executable) {
             resolve(_this5);
           }
         }
+      });
+    }
+  }, {
+    key: 'assureMergeable',
+    value: function assureMergeable() {
+      var _this6 = this;
+
+      return this.setVersion().then(function () {
+        return _this6.setSysPath();
+      }).catch(function (err) {
+        return _this6.addError(err);
+      });
+    }
+  }, {
+    key: 'mergeField',
+    get: function get() {
+      return JSON.stringify({
+        rawVersion: this.rawVersion,
+        sysPath: this.sysPath
       });
     }
   }]);

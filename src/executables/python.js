@@ -1,5 +1,4 @@
 import { execFile } from '../executive'
-import { platform } from 'os'
 import Executable from './executable'
 
 export default class PythonExecutable extends Executable {
@@ -61,7 +60,6 @@ export default class PythonExecutable extends Executable {
         this.installer = 'xy'
       }
 
-
       if (this.realpath) {
         /* Custom Distributions */
         if (this.pathContains('Enthought')) { this.installer = 'canopy' }
@@ -104,13 +102,11 @@ export default class PythonExecutable extends Executable {
   }
 
   get mergeField () {
-    if(platform() === 'win32') {
-      return JSON.stringify({
-        rawVersion: this.rawVersion,
-        sysPath: this.sysPath
-      })
-    } else {
-      return this.realpath
-    }
+    // previously just .realpath
+    return JSON.stringify({
+      rawVersion: this.rawVersion,
+      sysPath: this.sysPath
+    })
   }
+
 }
