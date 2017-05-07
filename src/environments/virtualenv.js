@@ -42,7 +42,7 @@ export default class VirtualEnv extends Environment {
           reject(error)
         }
         if (stderr) {
-          resolve('')
+          resolve(null)
         } else {
           resolve(stdout)
         }
@@ -53,6 +53,9 @@ export default class VirtualEnv extends Environment {
   static find () {
     return this.lsvirtualenv()
       .then((stdout) => {
+        if (!stdout) {
+          return []
+        }
         let names = stdout.trim().split('\n')
         return names.map(name => new VirtualEnv(name))
       })

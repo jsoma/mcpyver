@@ -7,9 +7,9 @@ module.exports =
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
+/******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-/******/ 		}
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 59);
+/******/ 	return __webpack_require__(__webpack_require__.s = 70);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -951,18 +951,18 @@ var fs = __webpack_require__(1)
 var rp = __webpack_require__(21)
 var minimatch = __webpack_require__(8)
 var Minimatch = minimatch.Minimatch
-var inherits = __webpack_require__(66)
-var EE = __webpack_require__(70).EventEmitter
+var inherits = __webpack_require__(65)
+var EE = __webpack_require__(69).EventEmitter
 var path = __webpack_require__(2)
 var assert = __webpack_require__(48)
 var isAbsolute = __webpack_require__(9)
-var globSync = __webpack_require__(64)
+var globSync = __webpack_require__(63)
 var common = __webpack_require__(22)
 var alphasort = common.alphasort
 var alphasorti = common.alphasorti
 var setopts = common.setopts
 var ownProp = common.ownProp
-var inflight = __webpack_require__(65)
+var inflight = __webpack_require__(64)
 var util = __webpack_require__(18)
 var childrenIgnored = common.childrenIgnored
 var isIgnored = common.isIgnored
@@ -1007,10 +1007,6 @@ glob.hasMagic = function (pattern, options_) {
 
   var g = new Glob(pattern, options)
   var set = g.minimatch.set
-
-  if (!pattern)
-    return false
-
   if (set.length > 1)
     return true
 
@@ -1364,6 +1360,9 @@ Glob.prototype._emitMatch = function (index, e) {
   if (this.aborted)
     return
 
+  if (this.matches[index][e])
+    return
+
   if (isIgnored(this, e))
     return
 
@@ -1372,22 +1371,16 @@ Glob.prototype._emitMatch = function (index, e) {
     return
   }
 
-  var abs = isAbsolute(e) ? e : this._makeAbs(e)
-
-  if (this.mark)
-    e = this._mark(e)
-
-  if (this.absolute)
-    e = abs
-
-  if (this.matches[index][e])
-    return
+  var abs = this._makeAbs(e)
 
   if (this.nodir) {
     var c = this.cache[abs]
     if (c === 'DIR' || Array.isArray(c))
       return
   }
+
+  if (this.mark)
+    e = this._mark(e)
 
   this.matches[index][e] = true
 
@@ -1415,15 +1408,15 @@ Glob.prototype._readdirInGlobStar = function (abs, cb) {
     fs.lstat(abs, lstatcb)
 
   function lstatcb_ (er, lstat) {
-    if (er && er.code === 'ENOENT')
+    if (er)
       return cb()
 
-    var isSym = lstat && lstat.isSymbolicLink()
+    var isSym = lstat.isSymbolicLink()
     self.symlinks[abs] = isSym
 
     // If it's not a symlink or a dir, then it's definitely a regular file.
     // don't bother doing a readdir in that case.
-    if (!isSym && lstat && !lstat.isDirectory()) {
+    if (!isSym && !lstat.isDirectory()) {
       self.cache[abs] = 'FILE'
       cb()
     } else
@@ -1676,7 +1669,7 @@ Glob.prototype._stat = function (f, cb) {
 }
 
 Glob.prototype._stat2 = function (f, abs, er, stat, cb) {
-  if (er && (er.code === 'ENOENT' || er.code === 'ENOTDIR')) {
+  if (er) {
     this.statCache[abs] = false
     return cb()
   }
@@ -1684,15 +1677,13 @@ Glob.prototype._stat2 = function (f, abs, er, stat, cb) {
   var needDir = f.slice(-1) === '/'
   this.statCache[abs] = stat
 
-  if (abs.slice(-1) === '/' && stat && !stat.isDirectory())
+  if (abs.slice(-1) === '/' && !stat.isDirectory())
     return cb(null, false, stat)
 
-  var c = true
-  if (stat)
-    c = stat.isDirectory() ? 'DIR' : 'FILE'
+  var c = stat.isDirectory() ? 'DIR' : 'FILE'
   this.cache[abs] = this.cache[abs] || c
 
-  if (needDir && c === 'FILE')
+  if (needDir && c !== 'DIR')
     return cb()
 
   return cb(null, c, stat)
@@ -1824,7 +1815,7 @@ try {
 } catch (er) {}
 
 var GLOBSTAR = minimatch.GLOBSTAR = Minimatch.GLOBSTAR = {}
-var expand = __webpack_require__(61)
+var expand = __webpack_require__(60)
 
 var plTypes = {
   '!': { open: '(?:(?!(?:', close: '))[^/]*?)'},
@@ -2794,8 +2785,8 @@ var common = __webpack_require__(0);
 //@commands
 
 // Load all default commands
-__webpack_require__(68).forEach(function (command) {
-  __webpack_require__(69)("./" + command);
+__webpack_require__(67).forEach(function (command) {
+  __webpack_require__(68)("./" + command);
 });
 
 //@
@@ -3746,7 +3737,7 @@ var origRealpathSync = fs.realpathSync
 
 var version = process.version
 var ok = /^v[0-5]\./.test(version)
-var old = __webpack_require__(63)
+var old = __webpack_require__(62)
 
 function newError (er) {
   return er && er.syscall === 'realpath' && (
@@ -3887,7 +3878,6 @@ function setopts (self, pattern, options) {
   self.nocase = !!options.nocase
   self.stat = !!options.stat
   self.noprocess = !!options.noprocess
-  self.absolute = !!options.absolute
 
   self.maxLength = options.maxLength || Infinity
   self.cache = options.cache || Object.create(null)
@@ -3910,11 +3900,7 @@ function setopts (self, pattern, options) {
   if (process.platform === "win32")
     self.root = self.root.replace(/\\/g, "/")
 
-  // TODO: is an absolute `cwd` supposed to be resolved against `root`?
-  // e.g. { cwd: '/test', root: __dirname } === path.join(__dirname, '/test')
-  self.cwdAbs = isAbsolute(self.cwd) ? self.cwd : makeAbs(self, self.cwd)
-  if (process.platform === "win32")
-    self.cwdAbs = self.cwdAbs.replace(/\\/g, "/")
+  self.cwdAbs = makeAbs(self, self.cwd)
   self.nomount = !!options.nomount
 
   // disable comments and negation in Minimatch.
@@ -6588,7 +6574,7 @@ var VirtualEnv = function (_Environment) {
             reject(error);
           }
           if (stderr) {
-            resolve('');
+            resolve(null);
           } else {
             resolve(stdout);
           }
@@ -6601,6 +6587,9 @@ var VirtualEnv = function (_Environment) {
       var _this3 = this;
 
       return this.lsvirtualenv().then(function (stdout) {
+        if (!stdout) {
+          return [];
+        }
         var names = stdout.trim().split('\n');
         return names.map(function (name) {
           return new VirtualEnv(name);
@@ -7413,27 +7402,6 @@ exports.default = VirtualEnvExecutable;
 
 /***/ }),
 /* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getPythonList = exports.getPipList = exports.getJupyterList = exports.getJupyter = exports.getVirtualEnv = exports.getConda = undefined;
-
-var _functions = __webpack_require__(50);
-
-exports.getConda = _functions.getConda;
-exports.getVirtualEnv = _functions.getVirtualEnv;
-exports.getJupyter = _functions.getJupyter;
-exports.getJupyterList = _functions.getJupyterList;
-exports.getPipList = _functions.getPipList;
-exports.getPythonList = _functions.getPythonList;
-
-/***/ }),
-/* 60 */
 /***/ (function(module, exports) {
 
 module.exports = balanced;
@@ -7497,11 +7465,11 @@ function range(a, b, str) {
 
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var concatMap = __webpack_require__(62);
-var balanced = __webpack_require__(60);
+var concatMap = __webpack_require__(61);
+var balanced = __webpack_require__(59);
 
 module.exports = expandTop;
 
@@ -7608,7 +7576,7 @@ function expand(str, isTop) {
   var isNumericSequence = /^-?\d+\.\.-?\d+(?:\.\.-?\d+)?$/.test(m.body);
   var isAlphaSequence = /^[a-zA-Z]\.\.[a-zA-Z](?:\.\.-?\d+)?$/.test(m.body);
   var isSequence = isNumericSequence || isAlphaSequence;
-  var isOptions = m.body.indexOf(',') >= 0;
+  var isOptions = /^(.*,)+(.+)?$/.test(m.body);
   if (!isSequence && !isOptions) {
     // {a},b}
     if (m.post.match(/,.*\}/)) {
@@ -7704,7 +7672,7 @@ function expand(str, isTop) {
 
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports) {
 
 module.exports = function (xs, fn) {
@@ -7723,7 +7691,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -8032,7 +8000,7 @@ exports.realpath = function realpath(p, cache, cb) {
 
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = globSync
@@ -8053,7 +8021,6 @@ var alphasorti = common.alphasorti
 var setopts = common.setopts
 var ownProp = common.ownProp
 var childrenIgnored = common.childrenIgnored
-var isIgnored = common.isIgnored
 
 function globSync (pattern, options) {
   if (typeof options === 'function' || arguments.length === 3)
@@ -8225,7 +8192,7 @@ GlobSync.prototype._processReaddir = function (prefix, read, abs, remain, index,
       if (e.charAt(0) === '/' && !this.nomount) {
         e = path.join(this.root, e)
       }
-      this._emitMatch(index, e)
+      this.matches[index][e] = true
     }
     // This was the last one, and no stats were needed
     return
@@ -8247,29 +8214,20 @@ GlobSync.prototype._processReaddir = function (prefix, read, abs, remain, index,
 
 
 GlobSync.prototype._emitMatch = function (index, e) {
-  if (isIgnored(this, e))
-    return
-
   var abs = this._makeAbs(e)
-
   if (this.mark)
     e = this._mark(e)
-
-  if (this.absolute) {
-    e = abs
-  }
 
   if (this.matches[index][e])
     return
 
   if (this.nodir) {
-    var c = this.cache[abs]
+    var c = this.cache[this._makeAbs(e)]
     if (c === 'DIR' || Array.isArray(c))
       return
   }
 
   this.matches[index][e] = true
-
   if (this.stat)
     this._stat(e)
 }
@@ -8287,18 +8245,16 @@ GlobSync.prototype._readdirInGlobStar = function (abs) {
   try {
     lstat = fs.lstatSync(abs)
   } catch (er) {
-    if (er.code === 'ENOENT') {
-      // lstat failed, doesn't exist
-      return null
-    }
+    // lstat failed, doesn't exist
+    return null
   }
 
-  var isSym = lstat && lstat.isSymbolicLink()
+  var isSym = lstat.isSymbolicLink()
   this.symlinks[abs] = isSym
 
   // If it's not a symlink or a dir, then it's definitely a regular file.
   // don't bother doing a readdir in that case.
-  if (!isSym && lstat && !lstat.isDirectory())
+  if (!isSym && !lstat.isDirectory())
     this.cache[abs] = 'FILE'
   else
     entries = this._readdir(abs, false)
@@ -8448,7 +8404,7 @@ GlobSync.prototype._processSimple = function (prefix, index) {
     prefix = prefix.replace(/\\/g, '/')
 
   // Mark this as a match
-  this._emitMatch(index, prefix)
+  this.matches[index][prefix] = true
 }
 
 // Returns either 'DIR', 'FILE', or false
@@ -8483,13 +8439,10 @@ GlobSync.prototype._stat = function (f) {
     try {
       lstat = fs.lstatSync(abs)
     } catch (er) {
-      if (er && (er.code === 'ENOENT' || er.code === 'ENOTDIR')) {
-        this.statCache[abs] = false
-        return false
-      }
+      return false
     }
 
-    if (lstat && lstat.isSymbolicLink()) {
+    if (lstat.isSymbolicLink()) {
       try {
         stat = fs.statSync(abs)
       } catch (er) {
@@ -8502,13 +8455,10 @@ GlobSync.prototype._stat = function (f) {
 
   this.statCache[abs] = stat
 
-  var c = true
-  if (stat)
-    c = stat.isDirectory() ? 'DIR' : 'FILE'
-
+  var c = stat.isDirectory() ? 'DIR' : 'FILE'
   this.cache[abs] = this.cache[abs] || c
 
-  if (needDir && c === 'FILE')
+  if (needDir && c !== 'DIR')
     return false
 
   return c
@@ -8524,7 +8474,7 @@ GlobSync.prototype._makeAbs = function (f) {
 
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var wrappy = __webpack_require__(47)
@@ -8584,7 +8534,7 @@ function slice (args) {
 
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 try {
@@ -8592,12 +8542,12 @@ try {
   if (typeof util.inherits !== 'function') throw '';
   module.exports = util.inherits;
 } catch (e) {
-  module.exports = __webpack_require__(67);
+  module.exports = __webpack_require__(66);
 }
 
 
 /***/ }),
-/* 67 */
+/* 66 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -8626,7 +8576,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 68 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = [
@@ -8661,7 +8611,7 @@ module.exports = [
 
 
 /***/ }),
-/* 69 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -8733,7 +8683,7 @@ function webpackContext(req) {
 };
 function webpackContextResolve(req) {
 	var id = map[req];
-	if(!(id + 1)) // check for number or string
+	if(!(id + 1)) // check for number
 		throw new Error("Cannot find module '" + req + "'.");
 	return id;
 };
@@ -8742,13 +8692,35 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 69;
+webpackContext.id = 68;
+
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ (function(module, exports) {
 
 module.exports = require("events");
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getPythonList = exports.getPipList = exports.getJupyterList = exports.getJupyter = exports.getVirtualEnv = exports.getConda = undefined;
+
+var _functions = __webpack_require__(50);
+
+exports.getConda = _functions.getConda;
+exports.getVirtualEnv = _functions.getVirtualEnv;
+exports.getJupyter = _functions.getJupyter;
+exports.getJupyterList = _functions.getJupyterList;
+exports.getPipList = _functions.getPipList;
+exports.getPythonList = _functions.getPythonList;
 
 /***/ })
 /******/ ]);
