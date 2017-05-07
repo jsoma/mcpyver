@@ -53,6 +53,19 @@ describe('Pip', () => {
           pip.packageDir.should.equal('/usr/local/lib/python3.5/site-packages')
         })
     })
+
+    it('sets the package directory from something wild', () => {
+      let pip = new PipExecutable()
+
+      sandbox.stub(pip, 'requestVersion', () => {
+        return Promise.resolve('pip 7.0.3+xy.11 from C:\\Python27\\lib\\site-packages (python 2.7)')
+      })
+
+      return pip.assureMergeable()
+        .then(() => {
+          pip.packageDir.should.equal('C:\\Python27\\lib\\site-packages')
+        })
+    })
   })
 
   describe('#pythonVersion', () => {

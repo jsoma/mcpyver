@@ -7011,7 +7011,7 @@ var PipExecutable = function (_Executable) {
     key: 'setPackageDirectory',
     value: function setPackageDirectory() {
       if (this.rawVersion) {
-        var matches = this.rawVersion.trim().match(/pip [\d.]+ from (.*) \(python/);
+        var matches = this.rawVersion.trim().match(/pip [\w\-.+]+ from (.*) \(python/);
         if (matches) {
           this.packageDir = matches[1];
         }

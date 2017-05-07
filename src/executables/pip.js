@@ -28,7 +28,7 @@ export default class PipExecutable extends Executable {
 
   setPackageDirectory () {
     if (this.rawVersion) {
-      let matches = this.rawVersion.trim().match(/pip [\d.]+ from (.*) \(python/)
+      let matches = this.rawVersion.trim().match(/pip [\w\-.+]+ from (.*) \(python/)
       if (matches) {
         this.packageDir = matches[1]
       }
