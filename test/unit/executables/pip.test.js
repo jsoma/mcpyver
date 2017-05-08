@@ -7,11 +7,16 @@ should()
 import PipExecutable from '../../../src/executables/pip'
 
 describe('Pip', () => {
+  let sandbox
+
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
+
   describe('#cleanVersion', () => {
     it('saves the raw version', () => {
       let pip = new PipExecutable()
 
-      sinon.stub(pip, 'requestVersion', () => {
+      sandbox.stub(pip, 'requestVersion', () => {
         return Promise.resolve('pip 8.1.2 from /usr/local/lib/python3.5/site-packages (python 3.5)')
       })
 
@@ -24,7 +29,7 @@ describe('Pip', () => {
     it('gets the version number after pip', () => {
       let pip = new PipExecutable()
 
-      sinon.stub(pip, 'requestVersion', () => {
+      sandbox.stub(pip, 'requestVersion', () => {
         return Promise.resolve('pip 8.1.2 from /usr/local/lib/python3.5/site-packages (python 3.5)')
       })
 
@@ -39,7 +44,7 @@ describe('Pip', () => {
     it('sets the package directory', () => {
       let pip = new PipExecutable()
 
-      sinon.stub(pip, 'requestVersion', () => {
+      sandbox.stub(pip, 'requestVersion', () => {
         return Promise.resolve('pip 8.1.2 from /usr/local/lib/python3.5/site-packages (python 3.5)')
       })
 
@@ -54,7 +59,7 @@ describe('Pip', () => {
     it('extracts the Python version from the raw string', () => {
       let pip = new PipExecutable()
 
-      sinon.stub(pip, 'requestVersion', () => {
+      sandbox.stub(pip, 'requestVersion', () => {
         return Promise.resolve('pip 8.1.2 from /usr/local/lib/python3.5/site-packages (python 3.5)')
       })
 
@@ -70,7 +75,7 @@ describe('Pip', () => {
     it('gets the package directory', () => {
       let pip = new PipExecutable()
 
-      sinon.stub(pip, 'requestVersion', () => {
+      sandbox.stub(pip, 'requestVersion', () => {
         return Promise.resolve('pip 8.1.2 from /usr/local/lib/python3.5/site-packages (python 3.5)')
       })
 
@@ -116,7 +121,7 @@ describe('Pip', () => {
         anaconda-client                    1.6.0      
         anaconda-navigator                 1.4.3`
 
-      sinon.stub(pip, 'getPackageListing', () => {
+      sandbox.stub(pip, 'getPackageListing', () => {
         return Promise.resolve(packageList)
       })
 
@@ -139,7 +144,7 @@ describe('Pip', () => {
         appnope (0.1.0)
         `
 
-      sinon.stub(pip, 'getPackageListing', () => {
+      sandbox.stub(pip, 'getPackageListing', () => {
         return Promise.resolve(packageList)
       })
 

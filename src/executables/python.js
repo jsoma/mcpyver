@@ -1,4 +1,5 @@
 import { execFile } from '../executive'
+import { platform } from 'os'
 import Executable from './executable'
 
 export default class PythonExecutable extends Executable {
@@ -56,6 +57,10 @@ export default class PythonExecutable extends Executable {
       if (this.rawVersion && this.rawVersion.indexOf('Continuum') !== -1) {
         this.installer = 'anaconda'
       }
+      if (this.rawVersion && this.rawVersion.indexOf('xy') !== -1) {
+        this.installer = 'xy'
+      }
+
 
       if (this.realpath) {
         /* Custom Distributions */
@@ -91,4 +96,21 @@ export default class PythonExecutable extends Executable {
     })
   }
 
+  assureMergeable () {
+    /* Need to set the version */
+    return this.setVersion()
+      .then(() => this.setSysPath())
+      .catch(err => this.addError(err))
+  }
+
+  get mergeField () {
+    if(platform() === 'win32') {
+      return JSON.stringify({
+        rawVersion: this.rawVersion,
+        sysPath: this.sysPath
+      })
+    } else {
+      return this.realpath
+    }
+  }
 }

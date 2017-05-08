@@ -7,5 +7,8 @@ should()
 import JupyterExecutable from '../../../src/executables/jupyter'
 
 describe('Jupyter', () => {
-  
+  let sandbox
+
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
 })

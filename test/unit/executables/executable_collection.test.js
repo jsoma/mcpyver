@@ -9,6 +9,11 @@ import PipExecutable from '../../../src/executables/pip'
 import ExecutableCollection from '../../../src/executables/executable_collection'
 
 describe('ExecutableCollection', () => {
+  let sandbox
+
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
+
   describe('#merge', () => {
     it('clusters executables by .realpath', () => {
       let ex1 = new Executable('/a/path/1')
@@ -55,7 +60,7 @@ describe('ExecutableCollection', () => {
       let spies = []
       let inputs = [1, 2, 3].map((i) => {
         let executable = new Executable(`/a/path/${i}`)
-        let spy = sinon.stub(executable, 'populate', () => {
+        let spy = sandbox.stub(executable, 'populate', () => {
           return Promise.resolve(i)
         })
         spies.push(spy)

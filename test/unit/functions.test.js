@@ -42,10 +42,11 @@ describe('functions', () => {
   })
 
   describe('#getPipList', () => {
-    it('calls the things its supposed to call', () => {
-      // funcs.getPipList().then((pips) => {
+    it('does not have any errors', () => {
+      // return funcs.getPipList().then((pips) => {
       //   console.log(`You have ${pips.length} pips installed`)
       //   for(let pip of pips) {
+      //     assert(pip.errors, [])
       //     console.log(`pip ${pip.version} has ${pip.packages.length} packages in ${pip.packageDir}`)
       //   }
       // })
@@ -61,11 +62,12 @@ describe('functions', () => {
   })
 
   describe('#getPythonList', () => {
-    it('calls the things its supposed to call', () => {
-      // funcs.getPythonList().then((pythons) => {
+    it('does not have any errors', () => {
+      // return funcs.getPythonList().then((pythons) => {
       //   console.log(`You have ${pythons.length} Pythons installed`)
       //   for(let python of pythons) {
       //     console.log(`${python.version} at ${python.realpath}`)
+      //     assert(python.errors, [])
       //   }
       // })
     }).timeout(10000)

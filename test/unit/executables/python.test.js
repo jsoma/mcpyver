@@ -7,11 +7,16 @@ should()
 import PythonExecutable from '../../../src/executables/python'
 
 describe('Python', () => {
+  let sandbox
+
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
+
   describe('#cleanVersion', () => {
     it('gets the text after Python', () => {
       let python = new PythonExecutable()
 
-      sinon.stub(python, 'requestVersion', () => {
+      sandbox.stub(python, 'requestVersion', () => {
         return Promise.resolve('Python 2.7.13')
       })
 
@@ -24,7 +29,7 @@ describe('Python', () => {
     it('ignores the Anaconda versioning', () => {
       let python = new PythonExecutable()
 
-      sinon.stub(python, 'requestVersion', () => {
+      sandbox.stub(python, 'requestVersion', () => {
         return Promise.resolve('Python 3.6.0 :: Anaconda 4.3.0 (x86_64)')
       })
 
@@ -121,7 +126,7 @@ describe('Python', () => {
     })
 
     it('detects ActivePython (OS X)', () => {
-      sinon.stub(python, 'isActivePython', () => {
+      sandbox.stub(python, 'isActivePython', () => {
         return Promise.resolve(true)
       })
 
@@ -133,7 +138,7 @@ describe('Python', () => {
     })
 
     it('detects ActivePython (OS X)', () => {
-      sinon.stub(python, 'isActivePython', () => {
+      sandbox.stub(python, 'isActivePython', () => {
         return Promise.resolve(false)
       })
 

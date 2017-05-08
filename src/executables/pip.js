@@ -15,18 +15,30 @@ export default class PipExecutable extends Executable {
   }
 
   setPythonVersion () {
-    this.pythonVersion = this.rawVersion.trim().match(/python ([\d.]+)/i)[1]
+    if (this.rawVersion) {
+      this.pythonVersion = this.rawVersion.trim().match(/python ([\d.]+)/i)[1]
+    }
   }
 
   cleanVersion () {
-    return this.rawVersion.trim().match(/pip ([\d.]+)/i)[1]
+    if (this.rawVersion) {
+      return this.rawVersion.trim().match(/pip ([\d.]+)/i)[1]
+    }
   }
 
   setPackageDirectory () {
-    this.packageDir = this.rawVersion.trim().match(/pip [\d.]+ from (.*) \(python/)[1]
+    if (this.rawVersion) {
+      let matches = this.rawVersion.trim().match(/pip [\d.]+ from (.*) \(python/)
+      if (matches) {
+        this.packageDir = matches[1]
+      }
+    }
   }
 
   setPackageDirectoryDetails () {
+    if (!this.packageDir) {
+      return
+    }
     this.packageDirDetails = ls('-dl', this.packageDir)[0]
     return new Promise((resolve, reject) => {
       access(this.packageDir, constants.R_OK | constants.W_OK, (err) => {
@@ -37,7 +49,7 @@ export default class PipExecutable extends Executable {
   }
 
   get mergeField () {
-    return this.packageDir
+    return this.rawVersion
   }
 
   assureMergeable () {
@@ -63,6 +75,10 @@ export default class PipExecutable extends Executable {
       .then((listing) => {
         this.packages = PipExecutable.parsePackageList(listing)
         return this
+      })
+      .catch((err) => {
+        this.packages = []
+        this.addError(err)
       })
   }
 

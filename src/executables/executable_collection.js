@@ -12,6 +12,7 @@ export default class ExecutableCollection extends Array {
     /* Go through every executable... */
     for (let e of this) {
       let mergeField = e.mergeField
+
       if (!mergeField) {
         mergeField = 'error'
       }

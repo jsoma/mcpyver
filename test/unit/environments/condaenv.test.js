@@ -9,6 +9,11 @@ should()
 import { CondaEnv } from '../../../src/environments'
 
 describe('CondaEnv', () => {
+  let sandbox
+
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
+
   describe('#constructor', () => {
     it('starts off without errors', () => {
       let env = new CondaEnv('/path/here')
@@ -24,7 +29,7 @@ describe('CondaEnv', () => {
 
   describe('#find', () => {
     it('creates CondaEnvs', () => {
-      sinon.stub(CondaEnv, 'lsenvs', () => {
+      sandbox.stub(CondaEnv, 'lsenvs', () => {
         return Promise.resolve(['/path/1', '/path/2', '/path/3'])
       })
 
@@ -43,7 +48,7 @@ describe('CondaEnv', () => {
   //   it('populates pip', () => {
   //     let env = new CondaEnv('/path/here')
 
-  //     sinon.stub(env, 'getPackages', () => {
+  //     sandbox.stub(env, 'getPackages', () => {
   //       return Promise.resolve([1, 2, 3])
   //     })
 

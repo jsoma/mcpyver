@@ -10,14 +10,9 @@ import { VirtualEnv } from '../../../src/environments'
 
 describe('VirtualEnv', () => {
   let sandbox
-    
-  beforeEach( () => {
-      sandbox = sinon.sandbox.create()
-  })
 
-  afterEach( () => {
-      sandbox.restore()
-  })
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
 
   describe('#commandPath', () => {
     it('gets the python path', () => {

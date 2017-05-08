@@ -7,11 +7,16 @@ should()
 import VirtualEnvExecutable from '../../../src/executables/virtualenv'
 
 describe('VirtualEnvExecutable', () => {
+  let sandbox
+
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
+
   describe('#cleanVersion', () => {
     it('saves the right version', () => {
       let venv = new VirtualEnvExecutable()
 
-      sinon.stub(venv, 'requestVersion', () => {
+      sandbox.stub(venv, 'requestVersion', () => {
         return Promise.resolve('15.0.3')
       })
 

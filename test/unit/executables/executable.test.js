@@ -7,6 +7,11 @@ should()
 import Executable from '../../../src/executables/executable'
 
 describe('Executable', () => {
+  let sandbox
+
+  beforeEach(() => sandbox = sinon.sandbox.create())
+  beforeEach(() => sandbox.restore())
+
   describe('#constructor', () => {
     it('orders params correctly', () => {
       let executable = new Executable('path', 'name', false)
@@ -81,7 +86,7 @@ describe('Executable', () => {
     it('sets the version', () => {      
       let executable = new Executable('/a/path')
 
-      sinon.stub(executable, 'requestVersion', () => {
+      sandbox.stub(executable, 'requestVersion', () => {
         return Promise.resolve('   1.2.3-rc4 ')
       })
 
@@ -94,7 +99,7 @@ describe('Executable', () => {
     it('cleans the version', () => {      
       let executable = new Executable('/a/path')
 
-      sinon.stub(executable, 'requestVersion', () => {
+      sandbox.stub(executable, 'requestVersion', () => {
         return Promise.resolve('   1.2.3-rc4 ')
       })
 

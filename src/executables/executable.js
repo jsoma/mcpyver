@@ -369,7 +369,11 @@ export default class Executable {
       '/usr/bin/',
       join(homedir(), 'miniconda*/bin'),
       '/Library/Frameworks/Python.framework/Versions/*/bin/',
-      '/System/Library/Frameworks/Python.framework/Versions/*/bin/'
+      '/System/Library/Frameworks/Python.framework/Versions/*/bin/',
+      join(homedir(), '..', '..', 'Python27/Scripts'),
+      join(homedir(), '..', '..', 'Python35/Scripts'),
+      join(homedir(), 'Python*/'),
+      join(homedir(), 'Python*/Scripts')
     ]
   }
 
