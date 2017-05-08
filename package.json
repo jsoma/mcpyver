@@ -1,6 +1,6 @@
 {
   "name": "mcpyver",
-  "version": "0.0.4-beta.14",
+  "version": "0.0.4-beta.15",
   "description": "Easily detect all of the Python versions on your machine",
   "main": "dist/bundle.js",
   "scripts": {
@@ -53,6 +53,7 @@
     "webpack": "^2.2.1"
   },
   "dependencies": {
-    "shelljs": "^0.7.7"
+    "shelljs": "^0.7.7",
+    "true-case-path": "^1.0.2"
   }
 }

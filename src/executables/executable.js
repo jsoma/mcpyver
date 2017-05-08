@@ -5,6 +5,7 @@ import ExecutableCollection from './executable_collection'
 import { glob } from 'glob'
 import { homedir } from 'os'
 import { join } from 'path'
+import trueCasePathSync from 'true-case-path'
 
 /**
  * A specific file on a computer that
@@ -24,7 +25,7 @@ export default class Executable {
      * Any paths that you can find this executable at (symlinked or otherwise)
      * @type {string[]} path
      */
-    this.paths = path ? [ path ] : []
+    this.paths = path ? [ trueCasePathSync(path) || path ] : []
 
     /**
      * The commands for which this executable is first in line to run
@@ -195,7 +196,8 @@ export default class Executable {
   get realpath () {
     if (!this._realpath) {
       try {
-        this._realpath = realpathSync(this.paths[0])
+        let path = realpathSync(this.paths[0])
+        this._realpath = trueCasePathSync(path) || path
       } catch (err) {
         this._realpath = this.paths[0]
         this.addError(err)
@@ -243,8 +245,9 @@ export default class Executable {
    * Adds a known path to this executable (e.g. a symlink)
    */
   addPath (path) {
-    if (path && this.paths.indexOf(path) === -1) {
-      this.paths.push(path)
+    let corrected = trueCasePathSync(path) || path
+    if (corrected && this.paths.indexOf(corrected) === -1) {
+      this.paths.push(corrected)
     }
   }
 
