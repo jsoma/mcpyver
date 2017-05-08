@@ -1,6 +1,6 @@
 {
   "name": "mcpyver",
-  "version": "0.0.4-beta.7",
+  "version": "0.0.4-beta.8",
   "description": "Easily detect all of the Python versions on your machine",
   "main": "dist/bundle.js",
   "scripts": {

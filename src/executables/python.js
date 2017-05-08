@@ -48,7 +48,7 @@ export default class PythonExecutable extends Executable {
 
   isXyPython () {
     return new Promise((resolve, reject) => {
-      let params = ['-m pip --version']
+      let params = ['-m','pip','--version']
       execFile(this.path, params, (error, stdout) => {
         if (error) {
           resolve(false)
@@ -90,15 +90,16 @@ export default class PythonExecutable extends Executable {
         /* if nothing else, test for ActivePython/ActiveState since it isn't in --version */
         if (!this.installer) {
           return Promise.all([
-            this.isActivePython,
-            this.isXyPython
-          ]).then((isA, isXy) => {
-            if (isA) {
+            this.isActivePython(),
+            this.isXyPython()
+          ]).then((values) => {
+            if (values[0]) {
               this.installer = 'activepython'
             }
-            if (isXy) {
+            if (values[1]) {
               this.installer = 'xy'
             }
+            resolve(this)
           })
         } else {
           resolve(this)
