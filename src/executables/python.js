@@ -39,7 +39,7 @@ export default class PythonExecutable extends Executable {
 
   isActivePython () {
     return new Promise((resolve, reject) => {
-      let params = ['-c', '"import activestate"']
+      let params = ['-c', 'import activestate']
       execFile(this.path, params, (error, stdout) => {
         resolve(!error)
       })
@@ -48,7 +48,7 @@ export default class PythonExecutable extends Executable {
 
   isWinPython () {
     return new Promise((resolve, reject) => {
-      let params = ['-c', '"import winpython"']
+      let params = ['-c', 'import winpython']
       execFile(this.path, params, (error, stdout) => {
         resolve(!error)
       })
