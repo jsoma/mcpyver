@@ -26,5 +26,5 @@ describe('VirtualEnvExecutable', () => {
           venv.rawVersion.should.equal('15.0.3')
         })
     })
-  })  
+  })
 })

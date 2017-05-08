@@ -66,6 +66,7 @@ describe('functions', () => {
       // return funcs.getPythonList().then((pythons) => {
       //   console.log(`You have ${pythons.length} Pythons installed`)
       //   for(let python of pythons) {
+      //     console.log(python.installer)
       //     console.log(`${python.version} at ${python.realpath}`)
       //     assert(python.errors, [])
       //   }
@@ -86,6 +87,7 @@ describe('functions', () => {
       // return funcs.getVirtualEnv()
       //   .then(result => {
       //     let processed = JSON.parse(JSON.stringify(result))
+      //     console.log(result)
       //     // console.log(JSON.stringify(processed, null, 4))
       //     // console.log(JSON.stringify(result))
       //   })

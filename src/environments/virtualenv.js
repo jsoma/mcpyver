@@ -41,7 +41,11 @@ export default class VirtualEnv extends Environment {
         if (error) {
           reject(error)
         }
-        resolve(stdout)
+        if (stderr) {
+          resolve('')
+        } else {
+          resolve(stdout)
+        }
       })
     })
   }
