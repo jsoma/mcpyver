@@ -56,12 +56,12 @@ export default class VirtualEnv extends Environment {
         if (!stdout) {
           return []
         }
-        let names = stdout.trim().split('\n')
+        let names = stdout.trim().replace(/[\s\S]*={3,}/, '').trim().split('\n')
         return names.map(name => new VirtualEnv(name))
       })
-      .catch(error => {
-        this.addError(error)
-        return this
+      .catch(() => {
+        // should we do something with the error? can't this.addError...
+        return []
       })
   }
 

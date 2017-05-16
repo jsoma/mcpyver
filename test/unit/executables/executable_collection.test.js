@@ -9,9 +9,8 @@ import PipExecutable from '../../../src/executables/pip'
 import ExecutableCollection from '../../../src/executables/executable_collection'
 
 describe('ExecutableCollection', () => {
-  let sandbox
+  let sandbox = sinon.sandbox.create()
 
-  beforeEach(() => sandbox = sinon.sandbox.create())
   beforeEach(() => sandbox.restore())
 
   describe('#merge', () => {

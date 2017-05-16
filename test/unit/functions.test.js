@@ -7,6 +7,9 @@ should()
 import * as funcs from '../../src/functions'
 
 describe('functions', () => {
+  let sandbox = sinon.sandbox.create()
+
+  beforeEach(() => sandbox.restore())
 
   let properties = [
     'realpath', 'version', 'rawVersion', 'defaultCommands', 'paths'

@@ -9,9 +9,8 @@ should()
 import { VirtualEnv } from '../../../src/environments'
 
 describe('VirtualEnv', () => {
-  let sandbox
+  let sandbox = sinon.sandbox.create()
 
-  beforeEach(() => sandbox = sinon.sandbox.create())
   beforeEach(() => sandbox.restore())
 
   describe('#commandPath', () => {
@@ -58,6 +57,21 @@ describe('VirtualEnv', () => {
         .then((results) => {
           results.length.should.equal(3)
           results[0].name.should.equal('test1')
+        })
+    })
+
+    it('copes with ==== header in Windows', () => {
+      sandbox.stub(VirtualEnv, 'lsvirtualenv', () => {
+        let badMultiline = "here /is /stuff" +
+                            "==================" +
+                            "schools"
+        return Promise.resolve(badMultiline)
+      })
+
+      VirtualEnv.find()
+        .then((results) => {
+          results.length.should.equal(1)
+          results[0].name.should.equal('schools')
         })
     })
   })

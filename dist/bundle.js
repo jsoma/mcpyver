@@ -869,7 +869,7 @@ var Executable = function () {
 
       var promises = this.searchPaths.map(function (path) {
         return new Promise(function (resolve, reject) {
-          (0, _glob.glob)((0, _path.join)(path, command), function (error, paths) {
+          (0, _glob.glob)((0, _path.join)(path, command + _this9.searchExtensionsGlob), function (error, paths) {
             if (error) {
               reject(error);
             } else {
@@ -892,7 +892,12 @@ var Executable = function () {
   }, {
     key: 'searchPaths',
     get: function get() {
-      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*/bin'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*/bin'), '/Library/Frameworks/Python.framework/Versions/*/bin/', '/System/Library/Frameworks/Python.framework/Versions/*/bin/', (0, _path.join)((0, _os.homedir)(), '..', '..', 'Python27/Scripts'), (0, _path.join)((0, _os.homedir)(), '..', '..', 'Python35/Scripts'), (0, _path.join)((0, _os.homedir)(), 'Python*/'), (0, _path.join)((0, _os.homedir)(), 'Python*/Scripts')];
+      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*', 'bin'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*', 'bin'), '/Library/Frameworks/Python.framework/Versions/*/bin/', '/System/Library/Frameworks/Python.framework/Versions/*/bin/', '/Python*', '/Python*/Scripts', (0, _path.join)((0, _os.homedir)(), 'Python*'), (0, _path.join)((0, _os.homedir)(), 'Python*', 'Scripts')].map(_path.normalize);
+    }
+  }, {
+    key: 'searchExtensionsGlob',
+    get: function get() {
+      return '?(.exe|.bat)';
     }
   }]);
 
@@ -7672,19 +7677,16 @@ var VirtualEnv = function (_Environment) {
   }, {
     key: 'find',
     value: function find() {
-      var _this3 = this;
-
       return this.lsvirtualenv().then(function (stdout) {
         if (!stdout) {
           return [];
         }
-        var names = stdout.trim().split('\n');
+        var names = stdout.trim().replace(/[\s\S]*={3,}/, '').trim().split('\n');
         return names.map(function (name) {
           return new VirtualEnv(name);
         });
-      }).catch(function (error) {
-        _this3.addError(error);
-        return _this3;
+      }).catch(function () {
+        return [];
       });
     }
   }, {

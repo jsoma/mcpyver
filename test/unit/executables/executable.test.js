@@ -7,9 +7,8 @@ should()
 import Executable from '../../../src/executables/executable'
 
 describe('Executable', () => {
-  let sandbox
+  let sandbox = sinon.sandbox.create()
 
-  beforeEach(() => sandbox = sinon.sandbox.create())
   beforeEach(() => sandbox.restore())
 
   describe('#constructor', () => {
