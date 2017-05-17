@@ -2,6 +2,7 @@ import { exec } from '../executive'
 import Environment from './environment'
 import { homedir, platform } from 'os'
 import { join } from 'path'
+import { existsSync } from 'fs'
 
 const WORKON_HOME = join(homedir(), '.virtualenvs')
 
@@ -33,8 +34,10 @@ export default class VirtualEnv extends Environment {
   static lsvirtualenv () {
     return new Promise((resolve, reject) => {
       let cmd = 'lsvirtualenv -b'
-      if (platform() !== 'win32') {
-        cmd = `source ~/.bash_profile && ${cmd}`
+      let bashPath = join(homedir(), '.bash_profile')
+
+      if (platform() !== 'win32' && existsSync(bashPath)) {
+        cmd = `source ${bashPath};${cmd}`
       }
 
       exec(cmd, (error, stdout, stderr) => {

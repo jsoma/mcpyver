@@ -7616,6 +7616,8 @@ var _os = __webpack_require__(7);
 
 var _path = __webpack_require__(2);
 
+var _fs = __webpack_require__(0);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7658,8 +7660,10 @@ var VirtualEnv = function (_Environment) {
     value: function lsvirtualenv() {
       return new Promise(function (resolve, reject) {
         var cmd = 'lsvirtualenv -b';
-        if ((0, _os.platform)() !== 'win32') {
-          cmd = 'source ~/.bash_profile && ' + cmd;
+        var bashPath = (0, _path.join)((0, _os.homedir)(), '.bash_profile');
+
+        if ((0, _os.platform)() !== 'win32' && (0, _fs.existsSync)(bashPath)) {
+          cmd = 'source ' + bashPath + ';' + cmd;
         }
 
         (0, _executive.exec)(cmd, function (error, stdout, stderr) {
