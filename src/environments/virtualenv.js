@@ -53,11 +53,11 @@ export default class VirtualEnv extends Environment {
   static find () {
     return this.lsvirtualenv()
       .then((stdout) => {
-        let names = stdout.trim().split('\n')
+        let names = stdout.trim().replace(/[\s\S]*={3,}/, '').trim().split('\n')
         return names.map(name => new VirtualEnv(name))
       })
-      .catch(error => {
-        this.addError(error)
+      .catch(() => {
+        // should we do something with the error? can't this.addError...
         return this
       })
   }
