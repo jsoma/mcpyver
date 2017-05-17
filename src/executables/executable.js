@@ -4,7 +4,7 @@ import { which } from 'shelljs'
 import ExecutableCollection from './executable_collection'
 import { glob } from 'glob'
 import { homedir } from 'os'
-import { join } from 'path'
+import { join, normalize } from 'path'
 import trueCasePathSync from 'true-case-path'
 
 /**
@@ -345,7 +345,7 @@ export default class Executable {
   static findByPaths (command) {
     let promises = this.searchPaths.map((path) => {
       return new Promise((resolve, reject) => {
-        glob(join(path, command), (error, paths) => {
+        glob(join(path, command + this.searchExtensionsGlob), (error, paths) => {
           if (error) {
             reject(error)
           } else {
@@ -367,17 +367,24 @@ export default class Executable {
   static get searchPaths () {
     return [
       '/usr/local/Cellar/python*/*/bin',
-      join(homedir(), 'anaconda*/bin'),
+      join(homedir(), 'anaconda*', 'bin'),
       '/usr/local/bin',
       '/usr/bin/',
-      join(homedir(), 'miniconda*/bin'),
+      join(homedir(), 'miniconda*', 'bin'),
       '/Library/Frameworks/Python.framework/Versions/*/bin/',
       '/System/Library/Frameworks/Python.framework/Versions/*/bin/',
-      join(homedir(), '..', '..', 'Python27/Scripts'),
-      join(homedir(), '..', '..', 'Python35/Scripts'),
-      join(homedir(), 'Python*/'),
-      join(homedir(), 'Python*/Scripts')
-    ]
+      '/Python*',
+      '/Python*/Scripts',
+      join(homedir(), 'Python*'),
+      join(homedir(), 'Python*', 'Scripts')
+    ].map(normalize)
+  }
+
+  /**
+   * Allowable extensions for execuables
+   */
+  static get searchExtensionsGlob () {
+    return '?(.exe|.bat)'
   }
 
 }
