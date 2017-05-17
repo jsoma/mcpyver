@@ -7694,12 +7694,11 @@ var VirtualEnv = function (_Environment) {
       var _this3 = this;
 
       return this.lsvirtualenv().then(function (stdout) {
-        var names = stdout.trim().split('\n');
+        var names = stdout.trim().replace(/[\s\S]*={3,}/, '').trim().split('\n');
         return names.map(function (name) {
           return new VirtualEnv(name);
         });
-      }).catch(function (error) {
-        _this3.addError(error);
+      }).catch(function () {
         return _this3;
       });
     }

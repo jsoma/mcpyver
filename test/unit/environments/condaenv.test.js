@@ -9,9 +9,8 @@ should()
 import { CondaEnv } from '../../../src/environments'
 
 describe('CondaEnv', () => {
-  let sandbox
+  let sandbox = sinon.sandbox.create()
 
-  beforeEach(() => sandbox = sinon.sandbox.create())
   beforeEach(() => sandbox.restore())
 
   describe('#constructor', () => {

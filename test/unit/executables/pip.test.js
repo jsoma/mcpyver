@@ -7,9 +7,8 @@ should()
 import PipExecutable from '../../../src/executables/pip'
 
 describe('Pip', () => {
-  let sandbox
+  let sandbox = sinon.sandbox.create()
 
-  beforeEach(() => sandbox = sinon.sandbox.create())
   beforeEach(() => sandbox.restore())
 
   describe('#cleanVersion', () => {

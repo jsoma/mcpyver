@@ -7,9 +7,8 @@ should()
 import VirtualEnvExecutable from '../../../src/executables/virtualenv'
 
 describe('VirtualEnvExecutable', () => {
-  let sandbox
+  let sandbox = sinon.sandbox.create()
 
-  beforeEach(() => sandbox = sinon.sandbox.create())
   beforeEach(() => sandbox.restore())
 
   describe('#cleanVersion', () => {
