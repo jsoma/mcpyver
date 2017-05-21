@@ -7441,24 +7441,24 @@ function getJupyterList() {
   });
 }
 
-function pythonCommands() {
-  var python2Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) {
-    return 'python2.' + i;
-  });
-  var python3Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) {
-    return 'python3.' + i;
-  });
-  return ['python', 'python2', 'python3'].concat(_toConsumableArray(python2Commands), _toConsumableArray(python3Commands));
-}
-
 function getPythonList() {
-  return _executables.PythonExecutable.findAll(pythonCommands()).then(function (e) {
+  return _executables.PythonExecutable.findAll(makeCommands('python')).then(function (e) {
     return e.populate();
   });
 }
 
+function makeCommands(base) {
+  var python2Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) {
+    return base + '2.' + i;
+  });
+  var python3Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) {
+    return base + '3.' + i;
+  });
+  return [base, base + '2', base + '3'].concat(_toConsumableArray(python2Commands), _toConsumableArray(python3Commands));
+}
+
 function getPipList() {
-  return _executables.PipExecutable.findAll(['pip', 'pip3']).then(function (e) {
+  return _executables.PipExecutable.findAll(makeCommands('pip')).then(function (e) {
     return e.populate();
   });
 }
