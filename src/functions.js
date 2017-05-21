@@ -23,19 +23,19 @@ function getJupyterList () {
     .then(j => j.populate())
 }
 
-function pythonCommands () {
-  const python2Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => 'python2.' + i)
-  const python3Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => 'python3.' + i)
-  return ['python', 'python2', 'python3', ...python2Commands, ...python3Commands]
-}
-
 function getPythonList () {
-  return PythonExecutable.findAll(pythonCommands())
+  return PythonExecutable.findAll(makeCommands('python'))
     .then(e => e.populate())
 }
 
+function makeCommands (base) {
+  const python2Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => base + '2.' + i)
+  const python3Commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => base + '3.' + i)
+  return [base, base + '2', base + '3', ...python2Commands, ...python3Commands]
+}
+
 function getPipList () {
-  return PipExecutable.findAll(['pip', 'pip3'])
+  return PipExecutable.findAll(makeCommands('pip'))
     .then(e => e.populate())
 }
 
