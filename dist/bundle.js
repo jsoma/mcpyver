@@ -892,7 +892,7 @@ var Executable = function () {
   }, {
     key: 'searchPaths',
     get: function get() {
-      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), 'anaconda*', 'bin'), '/usr/local/bin', '/usr/bin/', (0, _path.join)((0, _os.homedir)(), 'miniconda*', 'bin'), '/Library/Frameworks/Python.framework/Versions/*/bin/', '/System/Library/Frameworks/Python.framework/Versions/*/bin/', '/Python*', '/Python*/Scripts', (0, _path.join)((0, _os.homedir)(), 'Python*'), (0, _path.join)((0, _os.homedir)(), 'Python*', 'Scripts')].map(_path.normalize);
+      return ['/usr/local/Cellar/python*/*/bin', (0, _path.join)((0, _os.homedir)(), '*conda*'), (0, _path.join)((0, _os.homedir)(), '*conda*', 'bin'), (0, _path.join)((0, _os.homedir)(), '*conda*', 'Scripts'), '/usr/local/bin', '/usr/bin/', '/Library/Frameworks/Python.framework/Versions/*/bin/', '/System/Library/Frameworks/Python.framework/Versions/*/bin/', '/*conda*', '/*conda*/bin', '/*conda*/Scripts', '/*ython*', '/*ython*/Scripts', (0, _path.join)((0, _os.homedir)(), '*ython*'), (0, _path.join)((0, _os.homedir)(), '*ython*', 'Scripts')].map(_path.normalize);
     }
   }, {
     key: 'searchExtensionsGlob',
